@@ -47,11 +47,16 @@ export function Navbar() {
       {/* 1. TOP OFFICIAL UTILITY BAR (e-Uparjan Government Visual Language) */}
       <div className="bg-[#14532d] text-white text-xs py-1 px-4 sm:px-6 lg:px-8 border-b border-[#0f3e23] flex justify-between items-center">
         <div className="flex items-center space-x-2 sm:space-x-4">
-          <span className="font-semibold tracking-wide">
-            {language === 'hi' ? 'स्मार्ट कृषि खरीद सहायता मंच' : 'Smart India Hackathon 2026 • Agricultural Innovation'}
+          <span className="font-semibold tracking-wide flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+            <span>{language === 'hi' ? 'भारत सरकार' : 'Government of India'}</span>
           </span>
-          <span className="hidden sm:inline text-green-300/60">|</span>
-          <span className="hidden md:inline text-green-100 font-light">
+          <span className="text-green-300/60">|</span>
+          <span className="hidden sm:inline text-green-100 font-medium">
+            {language === 'hi' ? 'कृषि एवं किसान कल्याण मंत्रालय' : 'Ministry of Agriculture & Farmers Welfare'}
+          </span>
+          <span className="hidden md:inline text-green-300/60">|</span>
+          <span className="hidden md:inline text-green-200/90 font-light">
             {language === 'hi' ? 'पारदर्शी एमएसपी एवं डिजिटल कतार प्रबंधन' : 'Fair MSP Assurance & Live Queue Management'}
           </span>
         </div>
@@ -110,21 +115,46 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           
           {/* Brand Logo & Government-style Portal Heading */}
-          <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#166534] to-[#15803d] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
-              <Sprout className="w-7 h-7 text-amber-300" />
+          <Link href="/" className="flex items-center gap-3 sm:gap-4 group">
+            {/* National Ashoka Lion Capital Emblem */}
+            <div className="relative flex items-center justify-center shrink-0">
+              <Image
+                src="/emblem-of-india.svg"
+                alt="State Emblem of India"
+                width={42}
+                height={62}
+                className="h-12 sm:h-14 w-auto object-contain drop-shadow-xs"
+                priority
+              />
             </div>
-            <div className="flex flex-col">
+
+            {/* Vertical divider */}
+            <div className="h-10 w-[1.5px] bg-gray-300 hidden sm:block" />
+
+            {/* Mandi Mitra Emblem Icon */}
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-[#166534] to-[#15803d] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
+              <Sprout className="w-6 h-6 sm:w-7 sm:h-7 text-amber-300" />
+            </div>
+
+            {/* Project Name and Responsible Ministry */}
+            <div className="flex flex-col justify-center">
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-extrabold tracking-tight text-[#14532d] font-serif">
+                <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#14532d] font-serif leading-none">
                   {language === 'hi' ? 'मंडी मित्र' : 'Mandi Mitra'}
                 </span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-[#ea580c] border border-amber-200">
-                  {language === 'hi' ? 'ई-उपार्जन 2.0' : 'Kisan Portal'}
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-amber-100 text-[#ea580c] border border-amber-200">
+                  {language === 'hi' ? 'ई-उपार्जन 2.0' : 'E-Procurement Portal'}
                 </span>
               </div>
-              <span className="text-xs text-gray-600 font-medium hidden sm:inline-block">
-                {language === 'hi' ? 'पारदर्शी किसान खरीद एवं डिजिटल कतार प्रणाली' : 'Digital Crop Procurement & Fair MSP Platform'}
+              <span className="text-[11px] sm:text-xs text-gray-800 font-semibold leading-snug mt-1">
+                {language === 'hi' 
+                  ? 'कृषि एवं किसान कल्याण मंत्रालय • भारत सरकार' 
+                  : 'Ministry of Agriculture & Farmers Welfare • Government of India'}
+              </span>
+              <span className="text-[10px] text-gray-500 font-medium hidden md:inline-block leading-tight">
+                {language === 'hi'
+                  ? 'खाद्य एवं सार्वजनिक वितरण विभाग • पारदर्शी एमएसपी खरीद व कतार प्रणाली'
+                  : 'Department of Food & Public Distribution • Fair MSP & Live Mandi Queue'}
               </span>
             </div>
           </Link>

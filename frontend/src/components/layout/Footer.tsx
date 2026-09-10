@@ -28,7 +28,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 text-[11px] text-amber-300 bg-[#0d2c19] px-3 py-1.5 rounded border border-[#1a5531] w-fit">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'स्मार्ट इंडिया हैकाथॉन 2026' : 'Smart India Hackathon 2026'}</span>
+              <span>{language === 'hi' ? 'कृषि एवं किसान कल्याण मंत्रालय' : 'Ministry of Agriculture & Farmers Welfare'}</span>
             </div>
           </div>
 
@@ -123,7 +123,7 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <span>{language === 'hi' ? 'डिजिटल ई-उपार्जन नवाचार' : 'Digital E-Procurement Innovation'}</span>
             <span>•</span>
-            <span>SIH 2026</span>
+            <span>{language === 'hi' ? 'भारत सरकार' : 'Govt. of India'}</span>
           </div>
         </div>
       </div>

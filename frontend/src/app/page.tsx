@@ -75,7 +75,7 @@ export default function HomePage() {
               
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5B7F3B]/10 border border-[#5B7F3B]/20 text-[#5B7F3B] text-xs sm:text-sm font-semibold tracking-wide">
                 <Sparkles className="w-4 h-4 text-[#D4912A]" />
-                <span>{language === 'hi' ? 'स्मार्ट कृषि खरीद प्रबंधन 2026' : 'Smart India Hackathon • Agricultural Innovation'}</span>
+                <span>{language === 'hi' ? 'राष्ट्रीय कृषि ई-उपार्जन पोर्टल 2026' : 'National Agricultural E-Procurement Portal • MSP 2026'}</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#3D3426] tracking-tight leading-[1.15]">
