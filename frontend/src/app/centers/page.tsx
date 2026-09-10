@@ -144,13 +144,13 @@ export default function CentersPage() {
     searchQuery.trim().length > 0;
 
   return (
-    <div className="bg-[#FDF8F0] min-h-screen py-8 sm:py-12">
+    <div className="bg-white min-h-screen py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Header Title Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E8DFD0] pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200 pb-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#166534]/10 text-[#166534] text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#14532d]/10 text-[#14532d] text-xs font-bold border border-[#14532d]/20">
               <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
               <span>{language === 'hi' ? 'मध्य प्रदेश सरकारी कृषि ई-उपार्जन मंडियां' : 'Official MP Government Procurement Mandis'}</span>
             </div>
@@ -165,8 +165,8 @@ export default function CentersPage() {
           </div>
 
           {/* Crowd Recommendation Banner */}
-          <div className="bg-[#FAF3E6] border border-[#E8DFD0] rounded-2xl p-4 flex items-center gap-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-[#6B9F5B]/20 text-[#166534] flex items-center justify-center shrink-0">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center gap-3 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#14532d]/15 text-[#14532d] flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5 text-[#f97316]" />
             </div>
             <div className="text-xs">
@@ -186,7 +186,7 @@ export default function CentersPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-[#166534]" />
+              <Building2 className="w-3.5 h-3.5 text-[#14532d]" />
               <span>{language === 'hi' ? 'संभाग अनुसार त्वरित चयन' : 'Quick City / Region Selector'}</span>
             </span>
             {hasActiveFilters && (
@@ -211,7 +211,7 @@ export default function CentersPage() {
                   onClick={() => handleDistrictChange(r.id)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
                     isActive
-                      ? 'bg-[#166534] text-white shadow-xs scale-102'
+                      ? 'bg-[#14532d] text-white shadow-xs scale-102'
                       : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-2xs'
                   }`}
                 >
@@ -237,7 +237,7 @@ export default function CentersPage() {
                 <select
                   value={selectedDistrict}
                   onChange={(e) => handleDistrictChange(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#166534] transition appearance-none cursor-pointer"
+                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
                 >
                   <option value="all">{language === 'hi' ? 'सभी जिले / संभाग (All Cities)' : 'All Cities / Districts (MP)'}</option>
                   <option value="Indore">Indore (इंदौर) — 9 Mandis</option>
@@ -262,7 +262,7 @@ export default function CentersPage() {
                 <select
                   value={selectedTehsil}
                   onChange={(e) => setSelectedTehsil(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#166534] transition appearance-none cursor-pointer"
+                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
                 >
                   <option value="all">
                     {selectedDistrict === 'all'
@@ -293,7 +293,7 @@ export default function CentersPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={language === 'hi' ? 'उदा. Laxmibai, Sanwer, Mahidpur...' : 'e.g. Laxmibai, Sanwer, Mahidpur...'}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#166534] transition"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#14532d] transition"
                 />
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function CentersPage() {
                 <select
                   value={selectedCrop}
                   onChange={(e) => setSelectedCrop(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#166534] transition appearance-none cursor-pointer"
+                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
                 >
                   <option value="all">{language === 'hi' ? 'सभी फसलें (All Crops)' : 'All Major Crops'}</option>
                   {crops.map((c) => (
@@ -417,7 +417,7 @@ export default function CentersPage() {
                   {/* Body Content */}
                   <div className="p-5 space-y-3.5">
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold text-[#14532d] group-hover:text-[#166534] transition-colors leading-snug">
+                      <h3 className="text-base sm:text-lg font-bold text-[#14532d] group-hover:text-[#0f3d21] transition-colors leading-snug">
                         {language === 'hi' ? center.nameHi : center.name}
                       </h3>
                       <p className="text-xs text-gray-600 flex items-start gap-1.5 mt-1.5 leading-tight">
@@ -438,7 +438,7 @@ export default function CentersPage() {
                       </div>
                       <div>
                         <span className="text-[10px] text-gray-500 block uppercase font-bold">Avg Wait</span>
-                        <span className="font-bold text-xs text-emerald-700">~{center.avgProcessingTime || 16}m</span>
+                        <span className="font-bold text-xs text-[#14532d]">~{center.avgProcessingTime || 16}m</span>
                       </div>
                     </div>
 
@@ -453,7 +453,7 @@ export default function CentersPage() {
                           return (
                             <span
                               key={cropKey}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#FAF3E6] border border-[#E8DFD0] text-[11px] font-medium text-gray-800"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-50 border border-gray-200 text-[11px] font-medium text-gray-800"
                             >
                               <span>{cropData?.emoji || '🌾'}</span>
                               <span>{language === 'hi' ? cropData?.nameHi : cropData?.nameEn || cropKey}</span>
@@ -484,7 +484,7 @@ export default function CentersPage() {
                 <div className="p-5 pt-0">
                   <Link
                     href={`/centers/${center.id}`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
                   >
                     <span>{language === 'hi' ? 'स्लॉट बुक करें (Book Delivery Slot)' : 'Select Mandi & Book Slot'}</span>
                     <ChevronRight className="w-4 h-4" />
@@ -513,7 +513,7 @@ export default function CentersPage() {
             <button
               type="button"
               onClick={resetAllFilters}
-              className="px-5 py-2.5 rounded-xl bg-[#166534] text-white text-xs font-bold shadow-xs hover:bg-[#14532d] transition"
+              className="px-5 py-2.5 rounded-xl bg-[#14532d] text-white text-xs font-bold shadow-xs hover:bg-[#0f3d21] transition"
             >
               {language === 'hi' ? 'सभी 31 मंडियां देखें' : 'View All 31 Mandis'}
             </button>

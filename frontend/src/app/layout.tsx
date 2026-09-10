@@ -25,7 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#FDF8F0] text-[#3D3426] antialiased selection:bg-[#D4912A]/20 selection:text-[#3D3426]">
+      <body className="min-h-full flex flex-col bg-white text-gray-900 antialiased selection:bg-[#14532d]/20 selection:text-[#14532d]">
         <LanguageProvider>
           <AuthProvider>
             <div className="flex min-h-screen flex-col">

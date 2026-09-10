@@ -68,13 +68,13 @@ export default function DashboardPage() {
       pageTitle={{ en: 'Farmer Dashboard', hi: 'किसान डैशबोर्ड' }}
       pageDescription={{ en: 'your personal dashboard, appointments, and crop status', hi: 'अपना व्यक्तिगत डैशबोर्ड, अपॉइंटमेंट और फसल स्थिति' }}
     >
-      <div className="bg-[#FDF8F0] min-h-screen py-10 sm:py-14">
+      <div className="bg-white min-h-screen py-10 sm:py-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Welcome Header */}
-        <div className="bg-[#FFFDF9] rounded-3xl p-6 sm:p-8 border border-[#E8DFD0] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-[#5B7F3B] shadow-md shrink-0">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-[#14532d] shadow-md shrink-0">
               <Image
                 src={currentFarmer?.photo || '/images/farmers/farmer1.jpg'}
                 alt={currentFarmer?.name || 'Farmer'}
@@ -84,12 +84,12 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-[#3D3426] font-serif">
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 font-serif">
                   {t('dashboard.welcome')}, {language === 'hi' ? currentFarmer.nameHi : currentFarmer.name} {t('dashboard.welcomeSuffix')}
                 </h1>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
-              <p className="text-xs sm:text-sm text-[#6B5D4A]">
+              <p className="text-xs sm:text-sm text-gray-600">
                 {language === 'hi' 
                   ? `${currentFarmer.villageHi}, ${currentFarmer.districtHi} • किसान आईडी: MP-${currentFarmer.aadhaarLast4}` 
                   : `${currentFarmer.village}, ${currentFarmer.district} • Farmer ID: MP-${currentFarmer.aadhaarLast4}`}
@@ -100,7 +100,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/centers"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#5B7F3B] hover:bg-[#466B2A] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
             >
               <CalendarCheck className="w-4 h-4" />
               <span>{t('dashboard.bookSlot')}</span>
@@ -110,17 +110,17 @@ export default function DashboardPage() {
 
         {/* ACTIVE BOOKING HIGHLIGHT CARD */}
         {activeBooking && (
-          <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FAF3E6] rounded-3xl p-6 sm:p-8 border-2 border-[#5B7F3B] shadow-lg relative overflow-hidden space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E8DFD0] pb-5">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-[#14532d] shadow-lg relative overflow-hidden space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#5B7F3B] text-white flex items-center justify-center font-bold">
+                <div className="w-12 h-12 rounded-xl bg-[#14532d] text-white flex items-center justify-center font-bold">
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-[#5B7F3B] uppercase tracking-wider block">
+                  <span className="text-xs font-bold text-[#14532d] uppercase tracking-wider block">
                     {t('dashboard.activeBooking')}
                   </span>
-                  <h3 className="text-xl font-black text-[#3D3426]">
+                  <h3 className="text-xl font-black text-gray-900">
                     {language === 'hi' ? center?.nameHi : center?.name}
                   </h3>
                 </div>
@@ -128,38 +128,38 @@ export default function DashboardPage() {
 
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <span className="text-xs text-[#A89878] block uppercase font-bold">{t('dashboard.tokenNumber')}</span>
-                  <span className="text-3xl font-black text-[#5B7F3B] font-mono">#{activeBooking.tokenNumber}</span>
+                  <span className="text-xs text-gray-500 block uppercase font-bold">{t('dashboard.tokenNumber')}</span>
+                  <span className="text-3xl font-black text-[#14532d] font-mono">#{activeBooking.tokenNumber}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-[#FFFDF9] p-4 rounded-2xl border border-[#E8DFD0]">
-                <span className="text-xs text-[#A89878] block">{language === 'hi' ? 'तारीख व समय' : 'Date & Time'}</span>
-                <span className="text-sm font-bold text-[#3D3426] block mt-0.5">8 Sep • 11:00 AM</span>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <span className="text-xs text-gray-500 block">{language === 'hi' ? 'तारीख व समय' : 'Date & Time'}</span>
+                <span className="text-sm font-bold text-gray-900 block mt-0.5">8 Sep • 11:00 AM</span>
               </div>
-              <div className="bg-[#FFFDF9] p-4 rounded-2xl border border-[#E8DFD0]">
-                <span className="text-xs text-[#A89878] block">{language === 'hi' ? 'फसल व मात्रा' : 'Crop & Est. Qty'}</span>
-                <span className="text-sm font-bold text-[#3D3426] block mt-0.5">
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <span className="text-xs text-gray-500 block">{language === 'hi' ? 'फसल व मात्रा' : 'Crop & Est. Qty'}</span>
+                <span className="text-sm font-bold text-gray-900 block mt-0.5">
                   {cropData?.emoji} {cropData?.nameEn} • {activeBooking.estimatedQuantity} Q
                 </span>
               </div>
-              <div className="bg-[#FFFDF9] p-4 rounded-2xl border border-[#E8DFD0]">
-                <span className="text-xs text-[#A89878] block">{t('dashboard.queuePosition')}</span>
-                <span className="text-sm font-black text-[#D4912A] block mt-0.5">5th in Queue</span>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <span className="text-xs text-gray-500 block">{t('dashboard.queuePosition')}</span>
+                <span className="text-sm font-black text-[#ea580c] block mt-0.5">5th in Queue</span>
               </div>
-              <div className="bg-[#FFFDF9] p-4 rounded-2xl border border-[#E8DFD0]">
-                <span className="text-xs text-[#A89878] block">{t('dashboard.estimatedWait')}</span>
-                <span className="text-sm font-black text-[#5B7F3B] block mt-0.5">~35 {t('dashboard.minutes')}</span>
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <span className="text-xs text-gray-500 block">{t('dashboard.estimatedWait')}</span>
+                <span className="text-sm font-black text-[#14532d] block mt-0.5">~35 {t('dashboard.minutes')}</span>
               </div>
             </div>
 
             {/* Live Progress Bar Stepper Snippet */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs text-[#6B5D4A]">
-                <Sparkles className="w-4 h-4 text-[#D4912A]" />
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <Sparkles className="w-4 h-4 text-[#f97316]" />
                 <span>
                   {language === 'hi' 
                     ? 'कृपया टोकन समय से 15 मिनट पहले केंद्र पर रिपोर्ट करें।' 
@@ -169,7 +169,7 @@ export default function DashboardPage() {
 
               <Link
                 href="/queue"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#5B7F3B] text-white text-xs font-bold hover:bg-[#466B2A] transition"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#14532d] text-white text-xs font-bold hover:bg-[#0f3d21] transition"
               >
                 <span>{language === 'hi' ? 'लाइव स्टेटस व टोकन ट्रैक करें' : 'Track Live Queue Status'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -183,46 +183,46 @@ export default function DashboardPage() {
           
           <Link
             href="/centers"
-            className="p-6 rounded-3xl bg-[#FFFDF9] border border-[#E8DFD0] hover:border-[#5B7F3B] hover:-translate-y-1 transition shadow-xs group"
+            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#14532d] hover:-translate-y-1 transition shadow-xs group"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#5B7F3B]/10 text-[#5B7F3B] flex items-center justify-center mb-4 group-hover:scale-110 transition">
+            <div className="w-12 h-12 rounded-2xl bg-[#14532d]/10 text-[#14532d] flex items-center justify-center mb-4 group-hover:scale-110 transition">
               <CalendarCheck className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#3D3426] mb-1">{t('dashboard.bookSlot')}</h4>
-            <p className="text-xs text-[#6B5D4A] leading-relaxed">{t('dashboard.bookSlotDesc')}</p>
+            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.bookSlot')}</h4>
+            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.bookSlotDesc')}</p>
           </Link>
 
           <Link
             href="/queue"
-            className="p-6 rounded-3xl bg-[#FFFDF9] border border-[#E8DFD0] hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
+            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
           >
             <div className="w-12 h-12 rounded-2xl bg-[#D4912A]/10 text-[#D4912A] flex items-center justify-center mb-4 group-hover:scale-110 transition">
               <Clock className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#3D3426] mb-1">{t('dashboard.trackStatus')}</h4>
-            <p className="text-xs text-[#6B5D4A] leading-relaxed">{t('dashboard.trackStatusDesc')}</p>
+            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.trackStatus')}</h4>
+            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.trackStatusDesc')}</p>
           </Link>
 
           <Link
             href="/payments"
-            className="p-6 rounded-3xl bg-[#FFFDF9] border border-[#E8DFD0] hover:border-[#5B7F3B] hover:-translate-y-1 transition shadow-xs group"
+            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#14532d] hover:-translate-y-1 transition shadow-xs group"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#5B7F3B]/10 text-[#5B7F3B] flex items-center justify-center mb-4 group-hover:scale-110 transition">
+            <div className="w-12 h-12 rounded-2xl bg-[#14532d]/10 text-[#14532d] flex items-center justify-center mb-4 group-hover:scale-110 transition">
               <CreditCard className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#3D3426] mb-1">{t('dashboard.payments')}</h4>
-            <p className="text-xs text-[#6B5D4A] leading-relaxed">{t('dashboard.paymentsDesc')}</p>
+            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.payments')}</h4>
+            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.paymentsDesc')}</p>
           </Link>
 
           <Link
             href="/history"
-            className="p-6 rounded-3xl bg-[#FFFDF9] border border-[#E8DFD0] hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
+            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
           >
             <div className="w-12 h-12 rounded-2xl bg-[#D4912A]/10 text-[#D4912A] flex items-center justify-center mb-4 group-hover:scale-110 transition">
               <FileText className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#3D3426] mb-1">{t('history.title')}</h4>
-            <p className="text-xs text-[#6B5D4A] leading-relaxed">
+            <h4 className="text-base font-bold text-gray-900 mb-1">{t('history.title')}</h4>
+            <p className="text-xs text-gray-600 leading-relaxed">
               {language === 'hi' ? 'पिछली सभी खरीद रसीदें देखें' : 'View all previous procurement receipts'}
             </p>
           </Link>
@@ -233,12 +233,12 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Recent Procurements Table / List */}
-          <div className="lg:col-span-8 bg-[#FFFDF9] rounded-3xl p-6 sm:p-7 border border-[#E8DFD0] shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-[#E8DFD0] pb-4">
-              <h3 className="text-lg font-bold text-[#3D3426] font-serif">
+          <div className="lg:col-span-8 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+              <h3 className="text-lg font-bold text-gray-900 font-serif">
                 {language === 'hi' ? 'हालिया खरीद रिकॉर्ड' : 'Recent Procurements'}
               </h3>
-              <Link href="/history" className="text-xs font-bold text-[#5B7F3B] hover:underline flex items-center gap-1">
+              <Link href="/history" className="text-xs font-bold text-[#14532d] hover:underline flex items-center gap-1">
                 <span>{t('common.viewAll')}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -252,22 +252,22 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={item.id}
-                    className="p-4 rounded-2xl bg-[#FDF8F0] border border-[#E8DFD0] flex items-center justify-between gap-4"
+                    className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-3.5">
                       <div className="text-2xl">{c?.emoji}</div>
                       <div>
-                        <span className="text-sm font-bold text-[#3D3426] block">
+                        <span className="text-sm font-bold text-gray-900 block">
                           {language === 'hi' ? c?.nameHi : c?.nameEn} ({item.quantityQuintals} {t('history.quintals')})
                         </span>
-                        <span className="text-xs text-[#A89878]">
+                        <span className="text-xs text-gray-500">
                           {formatDate(item.createdAt, language)}
                         </span>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <span className="text-sm font-black text-[#3D3426] block">
+                      <span className="text-sm font-black text-gray-900 block">
                         {formatCurrency(item.totalAmount)}
                       </span>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md inline-block mt-0.5 ${
@@ -287,15 +287,15 @@ export default function DashboardPage() {
           </div>
 
           {/* Notifications Panel */}
-          <div className="lg:col-span-4 bg-[#FFFDF9] rounded-3xl p-6 sm:p-7 border border-[#E8DFD0] shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-[#E8DFD0] pb-4">
+          <div className="lg:col-span-4 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-[#D4912A]" />
-                <h3 className="text-lg font-bold text-[#3D3426] font-serif">
+                <h3 className="text-lg font-bold text-gray-900 font-serif">
                   {language === 'hi' ? 'सूचनाएं' : 'Notifications'}
                 </h3>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#5B7F3B]/10 text-[#5B7F3B] font-bold">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[#14532d]/10 text-[#14532d] font-bold">
                 {farmerNotifs.length}
               </span>
             </div>
@@ -306,13 +306,13 @@ export default function DashboardPage() {
                   key={n.id} 
                   className={`p-3.5 rounded-2xl border text-xs space-y-1.5 transition ${
                     n.read 
-                      ? 'border-[#E8DFD0] bg-[#FFFDF9] text-[#6B5D4A]' 
-                      : 'border-[#5B7F3B]/30 bg-[#5B7F3B]/5 text-[#3D3426]'
+                      ? 'border-gray-200 bg-white text-gray-600' 
+                      : 'border-[#14532d]/30 bg-[#14532d]/5 text-gray-900'
                   }`}
                 >
                   <div className="flex items-center justify-between font-bold">
                     <span>{language === 'hi' ? n.titleHi : n.title}</span>
-                    <span className="text-[10px] text-[#A89878]">SMS</span>
+                    <span className="text-[10px] text-gray-500">SMS</span>
                   </div>
                   <p className="leading-relaxed">
                     {language === 'hi' ? n.messageHi : n.message}

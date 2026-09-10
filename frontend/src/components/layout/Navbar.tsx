@@ -132,7 +132,7 @@ export function Navbar() {
             <div className="h-10 w-[1.5px] bg-gray-300 hidden sm:block" />
 
             {/* Mandi Mitra Emblem Icon */}
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-[#166534] to-[#15803d] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#14532d] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0">
               <Sprout className="w-6 h-6 sm:w-7 sm:h-7 text-amber-300" />
             </div>
 
@@ -165,7 +165,7 @@ export function Navbar() {
             {/* Authenticated Farmer Badge or Login CTA */}
             {isAuthenticated && user ? (
               <div className="flex items-center gap-2 bg-[#f8fafc] border border-gray-200 p-1.5 pr-3 rounded-xl shadow-xs">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#166534]">
+                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#14532d]">
                   <Image
                     src={user.photo || '/images/farmers/farmer1.jpg'}
                     alt={user.name}
@@ -177,7 +177,7 @@ export function Navbar() {
                   <span className="text-xs font-bold text-gray-900 block truncate max-w-[130px]">
                     {language === 'hi' ? user.nameHi : user.name}
                   </span>
-                  <span className="text-[10px] text-[#16a34a] font-semibold">
+                  <span className="text-[10px] text-[#14532d] font-semibold">
                     {language === 'hi' ? 'प्रमाणित किसान' : 'Verified Farmer'}
                   </span>
                 </div>
@@ -192,7 +192,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm border border-[#166534] bg-white text-[#166534] hover:bg-green-50 text-xs font-bold transition shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm border border-[#14532d] bg-white text-[#14532d] hover:bg-emerald-50 text-xs font-bold transition shadow-xs"
               >
                 <LogIn className="w-4 h-4" />
                 <span>{language === 'hi' ? 'किसान लॉगिन' : 'Farmer Login'}</span>
@@ -218,7 +218,7 @@ export function Navbar() {
               }`}
               title="Admin Procurement Officer Portal"
             >
-              <ShieldCheck className="w-4 h-4 text-[#166534]" />
+              <ShieldCheck className="w-4 h-4 text-[#14532d]" />
             </Link>
           </div>
 
@@ -237,7 +237,7 @@ export function Navbar() {
       </div>
 
       {/* 3. TABULAR GOVERNMENT NAVIGATION BAR (Deep Forest Green with Saffron Highlights) */}
-      <nav className="bg-[#166534] text-white shadow-inner hidden md:block">
+      <nav className="bg-[#14532d] text-white shadow-inner hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex space-x-1">
             {navLinks.map((item) => {
@@ -247,10 +247,10 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold transition-colors border-l border-[#15803d] last:border-r ${
+                  className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold transition-colors border-l border-[#0f3d21] last:border-r ${
                     isActive
-                      ? 'bg-[#14532d] text-[#f97316] border-b-2 border-[#f97316]'
-                      : 'text-white hover:bg-[#15803d] hover:text-amber-200'
+                      ? 'bg-[#0f3d21] text-[#f97316] border-b-2 border-[#f97316]'
+                      : 'text-white hover:bg-[#0f3d21] hover:text-amber-200'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-[#f97316]' : 'text-green-300'}`} />
@@ -266,7 +266,7 @@ export function Navbar() {
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold transition ${
               isAdmin
                 ? 'bg-amber-500 text-white'
-                : 'text-amber-300 hover:bg-[#14532d]'
+                : 'text-amber-300 hover:bg-[#0f3d21]'
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5" />

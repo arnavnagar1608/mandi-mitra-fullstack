@@ -311,9 +311,9 @@ export default function AdminDashboardPage() {
 
   if (isCheckingSession) {
     return (
-      <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-[#166534] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-[#14532d] border-t-transparent rounded-full animate-spin" />
           <span className="text-sm font-semibold text-[#14532d]">
             {language === 'hi' ? 'अधिकारी सत्र सत्यापित किया जा रहा है...' : 'Verifying Officer Session...'}
           </span>
@@ -327,7 +327,7 @@ export default function AdminDashboardPage() {
   // ══════════════════════════════════════════════════════════════════════════════
   if (!officer) {
     return (
-      <div className="bg-[#FDF8F0] min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+      <div className="bg-white min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
         <div className="max-w-xl mx-auto w-full space-y-6">
           
           {/* Government Portal Header */}
@@ -394,7 +394,7 @@ export default function AdminDashboardPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                    <UserCheck className="w-4 h-4 text-[#166534]" />
+                    <UserCheck className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <input
                     type="text"
@@ -402,7 +402,7 @@ export default function AdminDashboardPage() {
                     value={officerId}
                     onChange={(e) => setOfficerId(e.target.value)}
                     placeholder={language === 'hi' ? 'उदा. OFFICER-MP-001 या अधिकारी ईमेल' : 'e.g. OFFICER-MP-001 or admin@mandimitra.gov.in'}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] focus:border-transparent font-medium text-gray-800"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800"
                   />
                 </div>
               </div>
@@ -416,7 +416,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                    <KeyRound className="w-4 h-4 text-[#166534]" />
+                    <KeyRound className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -424,7 +424,7 @@ export default function AdminDashboardPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] focus:border-transparent font-medium text-gray-800"
+                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800"
                   />
                   <button
                     type="button"
@@ -443,12 +443,12 @@ export default function AdminDashboardPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                    <Building2 className="w-4 h-4 text-[#166534]" />
+                    <Building2 className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <select
                     value={selectedCenter}
                     onChange={(e) => setSelectedCenter(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] focus:border-transparent font-medium text-gray-800 bg-white"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800 bg-white"
                   >
                     <option value="c1">Bhopal Central Mandi (भोपाल सेंट्रल मंडी - c1)</option>
                     <option value="c2">Indore Mandi Complex (इंदौर मंडी कॉम्प्लेक्स - c2)</option>
@@ -482,7 +482,7 @@ export default function AdminDashboardPage() {
                     value={captchaInput}
                     onChange={(e) => setCaptchaInput(e.target.value)}
                     placeholder="Enter code"
-                    className="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#166534] font-mono font-bold"
+                    className="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] font-mono font-bold"
                   />
                 </div>
               </div>
@@ -491,7 +491,7 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full mt-2 py-3.5 px-4 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full mt-2 py-3.5 px-4 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -542,7 +542,7 @@ export default function AdminDashboardPage() {
 
             {/* Official Security Disclaimer */}
             <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 text-[11px] text-gray-600 flex items-start gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#166534] shrink-0 mt-0.5" />
+              <ShieldCheck className="w-4 h-4 text-[#14532d] shrink-0 mt-0.5" />
               <span>
                 {language === 'hi'
                   ? 'सुरक्षा सूचना: यह एक आधिकारिक सरकारी खरीद प्रबंधन प्रणाली है। अनधिकृत प्रवेश का प्रयास आईटी अधिनियम के तहत दंडनीय है।'
@@ -553,7 +553,7 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="text-center">
-            <Link href="/" className="text-xs font-semibold text-[#166534] hover:underline">
+            <Link href="/" className="text-xs font-semibold text-[#14532d] hover:underline">
               ← {language === 'hi' ? 'नागरिक मुख्य पृष्ठ पर लौटें' : 'Return to Citizen Public Portal'}
             </Link>
           </div>
@@ -567,7 +567,7 @@ export default function AdminDashboardPage() {
   // VIEW 2: UNLOCKED — OPERATIONAL OFFICER DESK / ADMIN PANEL
   // ══════════════════════════════════════════════════════════════════════════════
   return (
-    <div className="bg-[#FDF8F0] min-h-screen py-8 sm:py-12">
+    <div className="bg-white min-h-screen py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Top Active Officer Clearance Banner */}
@@ -625,68 +625,68 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Section Sub-heading */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#E8DFD0] pb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#3D3426] font-serif">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 font-serif">
               {t('admin.title')}
             </h1>
-            <p className="text-xs sm:text-sm text-[#6B5D4A]">
+            <p className="text-xs sm:text-sm text-gray-600">
               {language === 'hi' 
                 ? 'लाइव कतार प्रबंधन, इलेक्ट्रॉनिक तौल सत्यापन, पारदर्शी एमएसपी खरीद एवं आवक नियंत्रण।' 
                 : 'Real-time live queue management, digital weighbridge integration, and daily capacity monitoring.'}
             </p>
           </div>
           <div className="text-xs text-gray-500 font-medium">
-            Mandi Operational Status: <span className="text-emerald-700 font-bold">ONLINE (Gate Weighbridge Active)</span>
+            Mandi Operational Status: <span className="text-[#14532d] font-bold">ONLINE (Gate Weighbridge Active)</span>
           </div>
         </div>
 
         {/* 5 KEY DAILY COUNTERS */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           
-          <div className="bg-[#FFFDF9] p-5 rounded-3xl border border-[#E8DFD0] shadow-xs">
-            <span className="text-[11px] text-[#A89878] uppercase font-bold block">{t('admin.totalSlots')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#3D3426] mt-1 block">200</span>
-            <span className="text-[10px] text-[#5B7F3B] font-semibold">100% capacity ready</span>
+          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
+            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.totalSlots')}</span>
+            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">200</span>
+            <span className="text-[10px] text-[#14532d] font-semibold">100% capacity ready</span>
           </div>
 
-          <div className="bg-[#FFFDF9] p-5 rounded-3xl border border-[#E8DFD0] shadow-xs">
-            <span className="text-[11px] text-[#A89878] uppercase font-bold block">{t('admin.farmersArrived')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#3D3426] mt-1 block">178</span>
-            <span className="text-[10px] text-[#5B7F3B] font-semibold">Gate verified via QR</span>
+          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
+            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.farmersArrived')}</span>
+            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">178</span>
+            <span className="text-[10px] text-[#14532d] font-semibold">Gate verified via QR</span>
           </div>
 
-          <div className="bg-[#FFFDF9] p-5 rounded-3xl border border-[#E8DFD0] shadow-xs">
-            <span className="text-[11px] text-[#A89878] uppercase font-bold block">{t('admin.processed')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#5B7F3B] mt-1 block">156</span>
-            <span className="text-[10px] text-[#5B7F3B] font-semibold">Parchi generated</span>
+          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
+            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.processed')}</span>
+            <span className="text-2xl sm:text-3xl font-black text-[#14532d] mt-1 block">156</span>
+            <span className="text-[10px] text-[#14532d] font-semibold">Parchi generated</span>
           </div>
 
-          <div className="bg-[#FFFDF9] p-5 rounded-3xl border border-[#E8DFD0] shadow-xs">
-            <span className="text-[11px] text-[#A89878] uppercase font-bold block">{t('admin.inQueue')}</span>
+          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
+            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.inQueue')}</span>
             <span className="text-2xl sm:text-3xl font-black text-[#D4912A] mt-1 block">22</span>
             <span className="text-[10px] text-[#D4912A] font-semibold">Expected wait ~25m</span>
           </div>
 
-          <div className="bg-[#FFFDF9] p-5 rounded-3xl border border-[#E8DFD0] shadow-xs col-span-2 sm:col-span-1">
-            <span className="text-[11px] text-[#A89878] uppercase font-bold block">{t('admin.avgProcessTime')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#3D3426] mt-1 block">18 min</span>
-            <span className="text-[10px] text-[#5B7F3B] font-semibold">4m faster than norm</span>
+          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs col-span-2 sm:col-span-1">
+            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.avgProcessTime')}</span>
+            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">18 min</span>
+            <span className="text-[10px] text-[#14532d] font-semibold">4m faster than norm</span>
           </div>
 
         </div>
 
         {/* AI CROWD PREDICTION NOTICE */}
-        <div className="bg-[#FAF3E6] border border-[#D4C8B5] p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-gray-50 border border-gray-200 p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-2xl bg-[#D4912A] text-white flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-[#3D3426]">
+              <h4 className="text-sm font-bold text-gray-900">
                 {language === 'hi' ? 'एआई भीड़ पूर्वानुमान प्रणाली (AI Crowd Forecast)' : 'AI-Driven Arrival Surge Prediction'}
               </h4>
-              <p className="text-xs text-[#6B5D4A]">
+              <p className="text-xs text-gray-600">
                 {language === 'hi' 
                   ? 'कल सुबह 9:00 - 11:30 बजे भारी भीड़ (92% क्षमता) संभावित है। किसानों को 2:00 PM स्लॉट की स्वचालित सलाह भेजी गई।' 
                   : 'Surge anticipated tomorrow 9:00 - 11:30 AM (92% load). Automated SMS advice sent encouraging afternoon slots.'}
@@ -699,13 +699,13 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* ADMIN INTERACTION TABS */}
-        <div className="flex items-center gap-2 border-b border-[#E8DFD0] pb-2">
+        <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
           <button
             onClick={() => setActiveTab('queue')}
             className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition ${
               activeTab === 'queue'
-                ? 'bg-[#166534] text-white shadow-xs'
-                : 'text-[#6B5D4A] hover:bg-[#F5EDE0]'
+                ? 'bg-[#14532d] text-white shadow-xs'
+                : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             {t('admin.liveQueue')}
@@ -714,8 +714,8 @@ export default function AdminDashboardPage() {
             onClick={() => setActiveTab('analytics')}
             className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition ${
               activeTab === 'analytics'
-                ? 'bg-[#166534] text-white shadow-xs'
-                : 'text-[#6B5D4A] hover:bg-[#F5EDE0]'
+                ? 'bg-[#14532d] text-white shadow-xs'
+                : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             {language === 'hi' ? 'आवक विश्लेषण' : 'Hourly Arrivals & Crops'}
@@ -724,13 +724,13 @@ export default function AdminDashboardPage() {
 
         {/* TAB 1: LIVE QUEUE SEQUENCING */}
         {activeTab === 'queue' && (
-          <div className="bg-[#FFFDF9] rounded-3xl border border-[#E8DFD0] shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#E8DFD0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-[#3D3426] font-serif">
+                <h3 className="text-lg font-bold text-gray-900 font-serif">
                   {language === 'hi' ? 'आज की किसान कतार अनुक्रम' : "Today's Active Token Roster"}
                 </h3>
-                <span className="text-xs text-[#A89878]">Showing {queue.length} farmers registered • Active Center: {officer.centerName || 'Bhopal Central Mandi'}</span>
+                <span className="text-xs text-gray-500">Showing {queue.length} farmers registered • Active Center: {officer.centerName || 'Bhopal Central Mandi'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
@@ -745,7 +745,7 @@ export default function AdminDashboardPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#FAF3E6] border-b border-[#E8DFD0] text-[#6B5D4A] uppercase font-bold">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 uppercase font-bold">
                   <tr>
                     <th className="py-3.5 px-6">{t('admin.tokenNo')}</th>
                     <th className="py-3.5 px-6">{t('admin.farmerName')}</th>
@@ -755,7 +755,7 @@ export default function AdminDashboardPage() {
                     <th className="py-3.5 px-6 text-right">{t('admin.action')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E8DFD0]">
+                <tbody className="divide-y divide-gray-200">
                   {queue.map((farmer) => {
                     const c = crops.find(crop => crop.type === farmer.cropType);
                     const isInProgress = farmer.status === 'in-progress';
@@ -764,26 +764,26 @@ export default function AdminDashboardPage() {
                     return (
                       <tr 
                         key={farmer.tokenNumber} 
-                        className={`hover:bg-[#FDF8F0] transition ${
-                          isInProgress ? 'bg-[#5B7F3B]/10 font-medium' : ''
+                        className={`hover:bg-gray-50 transition ${
+                          isInProgress ? 'bg-[#14532d]/10 font-medium' : ''
                         }`}
                       >
                         <td className="py-4 px-6 font-mono font-bold text-sm">
                           #{farmer.tokenNumber}
                         </td>
                         <td className="py-4 px-6">
-                          <span className="font-bold text-[#3D3426] block">
+                          <span className="font-bold text-gray-900 block">
                             {language === 'hi' ? farmer.farmerNameHi : farmer.farmerName}
                           </span>
-                          <span className="text-[11px] text-[#A89878]">{farmer.phone}</span>
+                          <span className="text-[11px] text-gray-500">{farmer.phone}</span>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="inline-flex items-center gap-1 font-semibold text-[#3D3426]">
+                          <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
                             <span>{c?.emoji}</span>
                             <span>{language === 'hi' ? c?.nameHi : c?.nameEn}</span>
                           </span>
                         </td>
-                        <td className="py-4 px-6 font-bold text-[#3D3426]">
+                        <td className="py-4 px-6 font-bold text-gray-900">
                           {farmer.quantity} Quintals
                         </td>
                         <td className="py-4 px-6">
@@ -801,7 +801,7 @@ export default function AdminDashboardPage() {
                           {farmer.status === 'waiting' && (
                             <button
                               onClick={() => handleStatusChange(farmer.tokenNumber, 'in-progress')}
-                              className="px-3 py-1.5 rounded-xl bg-[#166534] hover:bg-[#14532d] text-white font-bold transition text-[11px]"
+                              className="px-3 py-1.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold transition text-[11px]"
                             >
                               Call In
                             </button>
@@ -809,13 +809,13 @@ export default function AdminDashboardPage() {
                           {farmer.status === 'in-progress' && (
                             <button
                               onClick={() => handleStatusChange(farmer.tokenNumber, 'completed')}
-                              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition text-[11px]"
+                              className="px-3 py-1.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold transition text-[11px]"
                             >
                               Approve Parchi
                             </button>
                           )}
                           {farmer.status === 'completed' && (
-                            <span className="text-[#5B7F3B] font-bold text-xs inline-flex items-center gap-1">
+                            <span className="text-[#14532d] font-bold text-xs inline-flex items-center gap-1">
                               <CheckCircle2 className="w-4 h-4" />
                               <span>Complete</span>
                             </span>
@@ -835,26 +835,26 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Hourly Distribution Visual */}
-            <div className="lg:col-span-7 bg-[#FFFDF9] rounded-3xl p-6 sm:p-7 border border-[#E8DFD0] shadow-xs space-y-6">
-              <h3 className="text-lg font-bold text-[#3D3426] font-serif">
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
+              <h3 className="text-lg font-bold text-gray-900 font-serif">
                 {t('admin.hourlyArrivals')}
               </h3>
               
               <div className="space-y-3">
                 {hourlyArrivalsData.map((item) => (
                   <div key={item.hour} className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold text-[#6B5D4A]">
+                    <div className="flex justify-between text-xs font-semibold text-gray-600">
                       <span>{item.hour}</span>
                       <span>{item.arrivals} farmers</span>
                     </div>
-                    <div className="w-full h-3 rounded-full bg-[#FAF3E6] overflow-hidden">
+                    <div className="w-full h-3 rounded-full bg-gray-100 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
                           item.arrivals > 35 
                             ? 'bg-[#C75B3A]' 
                             : item.arrivals > 20 
                             ? 'bg-[#D4912A]' 
-                            : 'bg-[#5B7F3B]'
+                            : 'bg-[#14532d]'
                         }`}
                         style={{ width: `${(item.arrivals / 50) * 100}%` }}
                       />
@@ -865,24 +865,24 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Crop Wise Acceptance Ratio */}
-            <div className="lg:col-span-5 bg-[#FFFDF9] rounded-3xl p-6 sm:p-7 border border-[#E8DFD0] shadow-xs space-y-6">
-              <h3 className="text-lg font-bold text-[#3D3426] font-serif">
+            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
+              <h3 className="text-lg font-bold text-gray-900 font-serif">
                 {t('admin.cropDistribution')}
               </h3>
 
               <div className="space-y-4">
                 {cropDistributionData.map((crop) => (
-                  <div key={crop.name} className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF3E6] border border-[#E8DFD0]">
+                  <div key={crop.name} className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
                     <div className="flex items-center gap-3">
                       <div 
                         className="w-4 h-4 rounded-full" 
                         style={{ backgroundColor: crop.color }} 
                       />
-                      <span className="text-xs font-bold text-[#3D3426]">
+                      <span className="text-xs font-bold text-gray-900">
                         {language === 'hi' ? crop.nameHi : crop.name}
                       </span>
                     </div>
-                    <span className="text-sm font-black text-[#5B7F3B]">
+                    <span className="text-sm font-black text-[#14532d]">
                       {crop.value}%
                     </span>
                   </div>

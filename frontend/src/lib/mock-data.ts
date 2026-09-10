@@ -144,13 +144,13 @@ export interface Testimonial {
 
 export const crops: CropInfo[] = [
   { type: 'wheat', nameEn: 'Wheat', nameHi: 'गेहूं', mspRate: 2275, emoji: '🌾', season: 'Rabi', seasonHi: 'रबी', color: '#D4912A' },
-  { type: 'rice', nameEn: 'Rice', nameHi: 'धान', mspRate: 2320, emoji: '🌾', season: 'Kharif', seasonHi: 'खरीफ', color: '#6B9F5B' },
+  { type: 'rice', nameEn: 'Rice', nameHi: 'धान', mspRate: 2320, emoji: '🌾', season: 'Kharif', seasonHi: 'खरीफ', color: '#14532d' },
   { type: 'mustard', nameEn: 'Mustard', nameHi: 'सरसों', mspRate: 5650, emoji: '🌻', season: 'Rabi', seasonHi: 'रबी', color: '#E8A94D' },
   { type: 'chana', nameEn: 'Gram (Chana)', nameHi: 'चना', mspRate: 5440, emoji: '🫘', season: 'Rabi', seasonHi: 'रबी', color: '#C4956A' },
   { type: 'maize', nameEn: 'Maize', nameHi: 'मक्का', mspRate: 2090, emoji: '🌽', season: 'Kharif', seasonHi: 'खरीफ', color: '#D4C12A' },
   { type: 'soybean', nameEn: 'Soybean', nameHi: 'सोयाबीन', mspRate: 4892, emoji: '🫛', season: 'Kharif', seasonHi: 'खरीफ', color: '#8BA85B' },
   { type: 'cotton', nameEn: 'Cotton', nameHi: 'कपास', mspRate: 7121, emoji: '☁️', season: 'Kharif', seasonHi: 'खरीफ', color: '#E8E0D0' },
-  { type: 'sugarcane', nameEn: 'Sugarcane', nameHi: 'गन्ना', mspRate: 340, emoji: '🎋', season: 'Annual', seasonHi: 'वार्षिक', color: '#5B9F3B' },
+  { type: 'sugarcane', nameEn: 'Sugarcane', nameHi: 'गन्ना', mspRate: 340, emoji: '🎋', season: 'Annual', seasonHi: 'वार्षिक', color: '#0f3d21' },
 ];
 
 // --- FARMERS ---

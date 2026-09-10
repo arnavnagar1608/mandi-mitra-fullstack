@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -22,9 +22,9 @@ export function CitizenServices() {
       subtitle: language === 'hi' ? 'मोबाइल OTP से त्वरित सत्यापन' : 'Instant mobile OTP verification',
       href: '/login',
       icon: UserPlus,
-      color: 'text-[#166534]',
-      bg: 'bg-green-50',
-      border: 'hover:border-t-[#166534]'
+      color: 'text-[#14532d]',
+      bg: 'bg-emerald-50',
+      border: 'hover:border-t-[#14532d]'
     },
     {
       title: language === 'hi' ? 'खरीद केंद्र व एमएसपी' : 'Procurement Centers',
@@ -40,9 +40,9 @@ export function CitizenServices() {
       subtitle: language === 'hi' ? 'सुविधाजनक तारीख व समय चुनें' : 'Reserve your mandi arrival time',
       href: '/centers',
       icon: CalendarCheck,
-      color: 'text-[#166534]',
-      bg: 'bg-green-50',
-      border: 'hover:border-t-[#166534]'
+      color: 'text-[#14532d]',
+      bg: 'bg-emerald-50',
+      border: 'hover:border-t-[#14532d]'
     },
     {
       title: language === 'hi' ? 'लाइव कतार व टोकन' : 'Live Queue & Token',
@@ -58,9 +58,9 @@ export function CitizenServices() {
       subtitle: language === 'hi' ? 'सीधे बैंक खाते में राशि की स्थिति' : 'Verify bank credit & PFMS transfer',
       href: '/payments',
       icon: CreditCard,
-      color: 'text-[#166534]',
-      bg: 'bg-green-50',
-      border: 'hover:border-t-[#166534]'
+      color: 'text-[#14532d]',
+      bg: 'bg-emerald-50',
+      border: 'hover:border-t-[#14532d]'
     },
     {
       title: language === 'hi' ? 'खरीद पावती व रिकॉर्ड' : 'Procurement History',
@@ -99,7 +99,7 @@ export function CitizenServices() {
               <div className={`w-12 h-12 rounded-full ${item.bg} ${item.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#166534] transition-colors leading-snug mb-1">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#14532d] transition-colors leading-snug mb-1">
                 {item.title}
               </h3>
               <p className="text-[11px] text-gray-500 line-clamp-2 hidden sm:block">

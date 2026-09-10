@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #5B7F3B;
-  --color-primary-light: #7BA55A;
-  --color-primary-dark: #466B2A;
+  --color-primary: #14532d;
+  --color-primary-light: #14532d;
+  --color-primary-dark: #0f3d21;
   --color-accent: #D4912A;
   --color-accent-light: #E8A94D;
   --color-accent-dark: #B87A1F;
-  --color-cream: #FDF8F0;
-  --color-cream-dark: #F5EDE0;
-  --color-card: #FFFDF9;
-  --color-charcoal: #3D3426;
-  --color-charcoal-light: #6B5D4A;
+  --color-cream: #ffffff;
+  --color-cream-dark: #f9fafb;
+  --color-card: #ffffff;
+  --color-charcoal: #1f2937;
+  --color-charcoal-light: #4b5563;
   --color-terracotta: #C75B3A;
-  --color-sage: #6B9F5B;
-  --color-border: #E8DFD0;
-  --color-border-light: #F0EAE0;
-  --color-warm-shadow: rgba(93, 72, 41, 0.08);
-  --color-warm-shadow-lg: rgba(93, 72, 41, 0.12);
+  --color-sage: #14532d;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-warm-shadow: rgba(0, 0, 0, 0.04);
+  --color-warm-shadow-lg: rgba(0, 0, 0, 0.08);
 
-  /* e-Uparjan-inspired Government Portal Palette */
+  /* Unified Government Dark Green Palette (#14532d) */
   --color-govGreen-900: #14532d;
-  --color-govGreen-800: #166534;
-  --color-govGreen-700: #15803d;
-  --color-govGreen-600: #16a34a;
+  --color-govGreen-800: #14532d;
+  --color-govGreen-700: #14532d;
+  --color-govGreen-600: #14532d;
   --color-govSaffron-500: #f97316;
   --color-govSaffron-600: #ea580c;
   --color-govNavy-900: #002147;
@@ -63,43 +63,27 @@ html {
 }
 
 body {
-  background-color: #FDF8F0;
-  color: #3D3426;
+  background-color: #ffffff;
+  color: #1f2937;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Warm grain texture overlay for sections */
-.grain-texture {
-  position: relative;
-}
-
-.grain-texture::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Warm scrollbar */
+/* Neutral clean scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5EDE0;
+  background: #f3f4f6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C4B69C;
+  background: #d1d5db;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A89878;
+  background: #9ca3af;
 }
 
 /* Smooth transitions for interactive elements */

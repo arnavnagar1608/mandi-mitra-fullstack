@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useLanguage } from '@/lib/i18n';
@@ -20,7 +20,7 @@ export function NoticeTicker() {
             ? 'खरीद सत्र 2026-27: समर्थन मूल्य (MSP) स्लॉट बुकिंग व डिजिटल टोकन जारी करने की सुविधा सक्रिय है।'
             : 'Procurement Season 2026-27: Digital slot booking and token generation are currently active.'}
         </span>
-        <span className="text-xs font-semibold text-[#166534] mx-4">
+        <span className="text-xs font-semibold text-[#14532d] mx-4">
           | {language === 'hi'
             ? 'सीधे बैंक खाते में सुरक्षित भुगतान हेतु अपना आधार लिंक्ड बैंक खाता विवरण सत्यापित रखें।'
             : 'Verify your Aadhaar-linked bank account for assured Direct Benefit Transfers (DBT).'}
@@ -30,7 +30,7 @@ export function NoticeTicker() {
             ? 'मंडी में वास्तविक समय कतार व टोकन स्थिति देखने हेतु "लाइव कतार" पेज देखें।'
             : 'Track real-time waiting tokens and weighbridge stages on the "Live Queue" page.'}
         </span>
-        <span className="text-xs font-semibold text-[#166534] mx-4">
+        <span className="text-xs font-semibold text-[#14532d] mx-4">
           | {language === 'hi'
             ? 'किसान सहायता हेल्पलाइन: 1800-180-1551 (मुफ्त सेवा, प्रातः 6:00 से रात्रि 10:00 बजे तक)।'
             : 'Farmer Helpline: 1800-180-1551 (Toll-Free, 6:00 AM to 10:00 PM).'}

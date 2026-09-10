@@ -9,14 +9,14 @@ export function Footer() {
   const { t, language } = useLanguage();
 
   return (
-    <footer className="bg-[#113820] text-[#E8DFD0] pt-14 pb-8 border-t-4 border-[#f97316]">
+    <footer className="bg-[#113820] text-gray-200 pt-14 pb-8 border-t-4 border-[#f97316]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-[#1b5230]">
           
           {/* Brand Info */}
           <div className="space-y-3.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg bg-[#166534] flex items-center justify-center text-amber-300 shadow-sm border border-green-600/40">
+              <div className="w-10 h-10 rounded-lg bg-[#14532d] flex items-center justify-center text-amber-300 shadow-sm border border-green-600/40">
                 <Sprout className="w-6 h-6" />
               </div>
               <span className="text-xl font-bold font-serif text-white tracking-wide">
