@@ -32,14 +32,27 @@ async function getDashboardMetrics() {
  */
 async function getCenterRoster(centerId, date) {
   const targetDate = date || new Date().toISOString().split('T')[0];
-  const snap = await db
-    .collection('bookings')
-    .where('centerId', '==', centerId)
-    .where('date', '==', targetDate)
-    .orderBy('tokenNumber', 'asc')
-    .get();
+  try {
+    const snap = await db
+      .collection('bookings')
+      .where('centerId', '==', centerId)
+      .where('date', '==', targetDate)
+      .orderBy('tokenNumber', 'asc')
+      .get();
 
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    if (err.code === 9 || String(err.message).includes('index')) {
+      const snap = await db
+        .collection('bookings')
+        .where('centerId', '==', centerId)
+        .where('date', '==', targetDate)
+        .get();
+      const results = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      return results.sort((a, b) => (a.tokenNumber || 0) - (b.tokenNumber || 0));
+    }
+    throw err;
+  }
 }
 
 /**
@@ -183,10 +196,98 @@ async function getCenterAnalytics(centerId) {
   };
 }
 
+/**
+ * Authenticate Mandi Officer / Center In-Charge credentials.
+ */
+async function officerLogin({ officerId, password }) {
+  if (!officerId || !password) {
+    const error = new Error('Officer ID and password are required.');
+    error.statusCode = 400;
+    error.code = 'INVALID_INPUT';
+    throw error;
+  }
+
+  // Pre-configured official officer records with fallback credentials
+  const defaultPassword = process.env.OFFICER_PASSWORD || 'Mandi@Officer2026';
+  const superAdminPassword = process.env.SUPER_ADMIN_PASSWORD || 'Super@Admin2026';
+
+  const validOfficers = [
+    {
+      officerId: 'OFFICER-MP-001',
+      aliases: ['admin@mandimitra.gov.in', 'officer_1', 'admin', 'rajesh.sharma'],
+      password: defaultPassword,
+      name: 'Shri Rajesh Sharma',
+      nameHi: 'श्री राजेश शर्मा',
+      designation: 'Mandi Center In-Charge',
+      designationHi: 'मंडी केंद्र प्रभारी',
+      role: 'center_officer',
+      assignedCenterId: 'c1',
+      centerName: 'Bhopal Central Mandi',
+      centerNameHi: 'भोपाल सेंट्रल मंडी'
+    },
+    {
+      officerId: 'OFFICER-MP-002',
+      aliases: ['indore@mandimitra.gov.in', 'officer_2', 'anita.verma'],
+      password: defaultPassword,
+      name: 'Smt. Anita Verma',
+      nameHi: 'श्रीमती अनीता वर्मा',
+      designation: 'Senior Procurement Inspector',
+      designationHi: 'वरिष्ठ खरीद निरीक्षक',
+      role: 'center_officer',
+      assignedCenterId: 'c2',
+      centerName: 'Indore Mandi Complex',
+      centerNameHi: 'इंदौर मंडी कॉम्प्लेक्स'
+    },
+    {
+      officerId: 'SUPER-ADMIN-01',
+      aliases: ['superadmin@mandimitra.gov.in', 'super_admin'],
+      password: superAdminPassword,
+      name: 'Dr. Alok Nath (IAS)',
+      nameHi: 'डॉ. आलोक नाथ (आईएएस)',
+      designation: 'State Procurement Commissioner',
+      designationHi: 'राज्य खरीद आयुक्त',
+      role: 'super_admin',
+      assignedCenterId: null,
+      centerName: 'All Mandis (Headquarters)',
+      centerNameHi: 'सभी मंडियां (मुख्यालय)'
+    }
+  ];
+
+  const matched = validOfficers.find(o => 
+    o.officerId.toLowerCase() === officerId.trim().toLowerCase() ||
+    o.aliases.some(a => a.toLowerCase() === officerId.trim().toLowerCase())
+  );
+
+  if (!matched || matched.password !== password.trim()) {
+    const error = new Error('Invalid Officer ID or Password. Access denied.');
+    error.statusCode = 401;
+    error.code = 'INVALID_CREDENTIALS';
+    throw error;
+  }
+
+  const token = `mock-token-${matched.role === 'super_admin' ? 'super_admin' : 'officer_1'}`;
+
+  return {
+    token,
+    officer: {
+      officerId: matched.officerId,
+      name: matched.name,
+      nameHi: matched.nameHi,
+      designation: matched.designation,
+      designationHi: matched.designationHi,
+      role: matched.role,
+      assignedCenterId: matched.assignedCenterId,
+      centerName: matched.centerName,
+      centerNameHi: matched.centerNameHi
+    }
+  };
+}
+
 module.exports = {
   getDashboardMetrics,
   getCenterRoster,
   callNextToken,
   updateQueueEntry,
   getCenterAnalytics,
+  officerLogin,
 };

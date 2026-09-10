@@ -19,6 +19,18 @@ function requireAdminRole(allowedRoles = ['super_admin', 'center_officer']) {
       const adminDoc = await db.collection('admin_users').doc(req.user.uid).get();
 
       if (!adminDoc.exists) {
+        // In development/mock mode, support mock admin uids
+        if (req.user?.isMock && (req.user.uid === 'super_admin' || req.user.uid.startsWith('officer_'))) {
+          req.admin = {
+            id: req.user.uid,
+            uid: req.user.uid,
+            role: req.user.uid === 'super_admin' ? 'super_admin' : 'center_officer',
+            assignedCenterId: 'c1',
+            name: req.user.uid === 'super_admin' ? 'Super Administrator' : 'Shri Rajesh Sharma',
+            email: `${req.user.uid}@mandimitra.gov.in`
+          };
+          return next();
+        }
         return errorResponse(res, 'FORBIDDEN', 'Administrative privileges required.', 403);
       }
 

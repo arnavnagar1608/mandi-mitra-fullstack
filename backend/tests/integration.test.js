@@ -220,6 +220,41 @@ async function testTestimonialEndpoints() {
   assert('testimonials array present', Array.isArray(listRes.body?.data?.testimonials));
 }
 
+async function testAdminEndpoints() {
+  console.log('\n[Admin & Officer Desk]');
+
+  // 1. Unauthenticated roster access should be rejected
+  const unauthedRoster = await request('GET', '/api/admin/centers/c1/roster');
+  assertStatus('GET /api/admin/centers/c1/roster (no token) → 401', unauthedRoster, 401);
+
+  // 2. Invalid officer login should be rejected
+  const invalidLogin = await request('POST', '/api/admin/login', {
+    officerId: 'OFFICER-MP-001',
+    password: 'wrong_password_xyz'
+  }, JSON_HEADER);
+  assertStatus('POST /api/admin/login (wrong password) → 401', invalidLogin, 401);
+
+  // 3. Valid officer login
+  const validLogin = await request('POST', '/api/admin/login', {
+    officerId: 'OFFICER-MP-001',
+    password: 'Mandi@Officer2026'
+  }, JSON_HEADER);
+  assertSuccess('POST /api/admin/login (correct credentials)', validLogin);
+  assert('officer token returned', typeof validLogin.body?.data?.token === 'string');
+  assert('officer profile returned', validLogin.body?.data?.officer?.officerId === 'OFFICER-MP-001');
+
+  const officerToken = validLogin.body?.data?.token;
+  const officerHeader = {
+    'Authorization': `Bearer ${officerToken}`,
+    'Content-Type': 'application/json'
+  };
+
+  // 4. Authorized roster query with officer token
+  const rosterRes = await request('GET', '/api/admin/centers/c1/roster', null, officerHeader);
+  assertSuccess('GET /api/admin/centers/c1/roster (officer token)', rosterRes);
+  assert('roster array present', Array.isArray(rosterRes.body?.data?.roster));
+}
+
 async function test404() {
   console.log('\n[404 / Error handling]');
 
@@ -245,6 +280,7 @@ async function main() {
     await testBookingEndpoints();
     await testCropEndpoints();
     await testTestimonialEndpoints();
+    await testAdminEndpoints();
     await test404();
   } catch (err) {
     console.error('\nFATAL:', err.message);

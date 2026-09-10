@@ -57,10 +57,21 @@ async function getCenterAnalyticsHandler(req, res, next) {
   }
 }
 
+async function adminLoginHandler(req, res, next) {
+  try {
+    const { officerId, password } = req.body;
+    const result = await adminService.officerLogin({ officerId, password });
+    return successResponse(res, result, 'Officer authenticated successfully.');
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getDashboardMetricsHandler,
   getCenterRosterHandler,
   callNextTokenHandler,
   updateQueueEntryHandler,
   getCenterAnalyticsHandler,
+  adminLoginHandler,
 };

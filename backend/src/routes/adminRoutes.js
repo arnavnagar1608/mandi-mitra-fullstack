@@ -11,9 +11,13 @@ const {
   callNextTokenHandler,
   updateQueueEntryHandler,
   getCenterAnalyticsHandler,
+  adminLoginHandler,
 } = require('../controllers/adminController');
 
-// All admin routes require admin auth
+// Public officer login portal endpoint
+router.post('/login', adminLoginHandler);
+
+// All other admin routes require admin auth
 const adminAuth = [authenticate, requireAdminRole(['super_admin', 'center_officer'])];
 
 // Super admin only
