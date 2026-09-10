@@ -68,262 +68,263 @@ export default function DashboardPage() {
       pageTitle={{ en: 'Farmer Dashboard', hi: 'किसान डैशबोर्ड' }}
       pageDescription={{ en: 'your personal dashboard, appointments, and crop status', hi: 'अपना व्यक्तिगत डैशबोर्ड, अपॉइंटमेंट और फसल स्थिति' }}
     >
-      <div className="bg-white min-h-screen py-10 sm:py-14">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        {/* Welcome Header */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-5">
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-[#14532d] shadow-md shrink-0">
-              <Image
-                src={currentFarmer?.photo || '/images/farmers/farmer1.jpg'}
-                alt={currentFarmer?.name || 'Farmer'}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 font-serif">
+      <div className="bg-gray-50 min-h-screen py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          
+          {/* Welcome Header */}
+          <div className="bg-white border-t-4 border-t-[#f97316] border border-gray-300 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 border border-gray-300 p-1 bg-white shrink-0">
+                <Image
+                  src={currentFarmer?.photo || '/images/farmers/farmer1.jpg'}
+                  alt={currentFarmer?.name || 'Farmer'}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-[#14532d] uppercase">
                   {t('dashboard.welcome')}, {language === 'hi' ? currentFarmer.nameHi : currentFarmer.name} {t('dashboard.welcomeSuffix')}
                 </h1>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-sm text-gray-700 mt-1">
+                  <strong>{language === 'hi' ? 'पता:' : 'Address:'}</strong> {language === 'hi' 
+                    ? `${currentFarmer.villageHi}, ${currentFarmer.districtHi}` 
+                    : `${currentFarmer.village}, ${currentFarmer.district}`} <br/>
+                  <strong>{language === 'hi' ? 'किसान आईडी:' : 'Farmer ID:'}</strong> MP-{currentFarmer.aadhaarLast4}
+                </p>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600">
-                {language === 'hi' 
-                  ? `${currentFarmer.villageHi}, ${currentFarmer.districtHi} • किसान आईडी: MP-${currentFarmer.aadhaarLast4}` 
-                  : `${currentFarmer.village}, ${currentFarmer.district} • Farmer ID: MP-${currentFarmer.aadhaarLast4}`}
-              </p>
+            </div>
+
+            <div>
+              <Link
+                href="/centers"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#14532d] text-white text-sm font-bold shadow-sm hover:bg-[#0f3d21] transition rounded-sm border border-[#0f3d21]"
+              >
+                <CalendarCheck className="w-4 h-4" />
+                <span>{t('dashboard.bookSlot')}</span>
+              </Link>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* ACTIVE BOOKING HIGHLIGHT CARD */}
+          {activeBooking && (
+            <div className="bg-white border border-[#14532d] shadow-sm">
+              <div className="bg-[#14532d] text-white px-4 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-sm uppercase tracking-wide">
+                  <Clock className="w-4 h-4" />
+                  <span>{t('dashboard.activeBooking')}</span>
+                </div>
+                <div className="text-sm font-bold bg-white text-[#14532d] px-2 py-0.5 rounded-sm">
+                  {t('dashboard.tokenNumber')}: {activeBooking.tokenNumber}
+                </div>
+              </div>
+              
+              <div className="p-4 sm:p-5">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                  {language === 'hi' ? center?.nameHi : center?.name}
+                </h3>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <span className="text-xs font-semibold text-gray-500 uppercase">{language === 'hi' ? 'तारीख व समय' : 'Date & Time'}</span>
+                    <span className="text-sm font-bold text-gray-900 block mt-1">{language === 'hi' ? '8 सितं • 11:00 AM' : '8 Sep • 11:00 AM'}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-500 uppercase">{language === 'hi' ? 'फसल व मात्रा' : 'Crop & Est. Qty'}</span>
+                    <span className="text-sm font-bold text-gray-900 block mt-1">
+                      {language === 'hi' ? cropData?.nameHi : cropData?.nameEn} • {activeBooking.estimatedQuantity} {language === 'hi' ? 'क्विंटल' : 'Q'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-500 uppercase">{t('dashboard.queuePosition')}</span>
+                    <span className="text-sm font-bold text-[#ea580c] block mt-1">{language === 'hi' ? 'कतार में 5वें' : '5th in Queue'}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-gray-500 uppercase">{t('dashboard.estimatedWait')}</span>
+                    <span className="text-sm font-bold text-[#14532d] block mt-1">~35 {t('dashboard.minutes')}</span>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 p-3 text-sm text-yellow-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-start gap-2">
+                    <span className="font-bold">⚠️</span>
+                    <span>
+                      {language === 'hi' 
+                        ? 'कृपया टोकन समय से 15 मिनट पहले केंद्र पर रिपोर्ट करें।' 
+                        : 'Please report to the verification counter 15 minutes before slot time.'}
+                    </span>
+                  </div>
+                  <Link
+                    href="/queue"
+                    className="shrink-0 px-4 py-2 bg-[#ea580c] text-white text-xs font-bold hover:bg-[#c2410c] transition rounded-sm shadow-sm"
+                  >
+                    {language === 'hi' ? 'लाइव स्टेटस व टोकन ट्रैक करें' : 'Track Live Queue Status'}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 4 QUICK ACTION TILES */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
             <Link
               href="/centers"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
+              className="bg-white border border-gray-300 p-4 hover:bg-gray-50 transition shadow-sm flex items-start gap-3"
             >
-              <CalendarCheck className="w-4 h-4" />
-              <span>{t('dashboard.bookSlot')}</span>
+              <div className="p-2 bg-[#14532d] text-white shrink-0">
+                <CalendarCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#14532d] uppercase mb-1">{t('dashboard.bookSlot')}</h4>
+                <p className="text-xs text-gray-600">{t('dashboard.bookSlotDesc')}</p>
+              </div>
             </Link>
-          </div>
-        </div>
 
-        {/* ACTIVE BOOKING HIGHLIGHT CARD */}
-        {activeBooking && (
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-[#14532d] shadow-lg relative overflow-hidden space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-[#14532d] text-white flex items-center justify-center font-bold">
-                  <Clock className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-[#14532d] uppercase tracking-wider block">
-                    {t('dashboard.activeBooking')}
-                  </span>
-                  <h3 className="text-xl font-black text-gray-900">
-                    {language === 'hi' ? center?.nameHi : center?.name}
+            <Link
+              href="/queue"
+              className="bg-white border border-gray-300 p-4 hover:bg-gray-50 transition shadow-sm flex items-start gap-3"
+            >
+              <div className="p-2 bg-[#ea580c] text-white shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#ea580c] uppercase mb-1">{t('dashboard.trackStatus')}</h4>
+                <p className="text-xs text-gray-600">{t('dashboard.trackStatusDesc')}</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/payments"
+              className="bg-white border border-gray-300 p-4 hover:bg-gray-50 transition shadow-sm flex items-start gap-3"
+            >
+              <div className="p-2 bg-[#14532d] text-white shrink-0">
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[#14532d] uppercase mb-1">{t('dashboard.payments')}</h4>
+                <p className="text-xs text-gray-600">{t('dashboard.paymentsDesc')}</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/history"
+              className="bg-white border border-gray-300 p-4 hover:bg-gray-50 transition shadow-sm flex items-start gap-3"
+            >
+              <div className="p-2 bg-gray-700 text-white shrink-0">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-700 uppercase mb-1">{t('history.title')}</h4>
+                <p className="text-xs text-gray-600">
+                  {language === 'hi' ? 'पिछली सभी खरीद रसीदें देखें' : 'View all previous procurement receipts'}
+                </p>
+              </div>
+            </Link>
+
+          </div>
+
+          {/* TWO COLUMN CONTENT: RECENT ACTIVITY & NOTIFICATIONS */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Recent Procurements Table */}
+            <div className="lg:col-span-2 bg-white border border-gray-300 shadow-sm">
+              <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-800 uppercase">
+                  {language === 'hi' ? 'हालिया खरीद रिकॉर्ड' : 'Recent Procurements'}
+                </h3>
+                <Link href="/history" className="text-xs font-bold text-[#14532d] hover:underline">
+                  {t('common.viewAll')} &raquo;
+                </Link>
+              </div>
+
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-600">
+                  <thead className="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+                    <tr>
+                      <th className="px-4 py-3">{language === 'hi' ? 'फसल' : 'Crop'}</th>
+                      <th className="px-4 py-3">{language === 'hi' ? 'मात्रा' : 'Quantity'}</th>
+                      <th className="px-4 py-3">{language === 'hi' ? 'दिनांक' : 'Date'}</th>
+                      <th className="px-4 py-3 text-right">{language === 'hi' ? 'राशि' : 'Amount'}</th>
+                      <th className="px-4 py-3 text-center">{language === 'hi' ? 'स्थिति' : 'Status'}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {procurementRecords.map((item) => {
+                      const c = crops.find(crop => crop.type === item.cropType);
+                      const isPaid = item.status === 'payment-completed';
+
+                      return (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium text-gray-900">
+                            {language === 'hi' ? c?.nameHi : c?.nameEn}
+                          </td>
+                          <td className="px-4 py-3">
+                            {item.quantityQuintals} {t('history.quintals')}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            {formatDate(item.createdAt, language)}
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-900 text-right">
+                            {formatCurrency(item.totalAmount)}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span className={`text-[11px] font-bold px-2 py-1 uppercase tracking-wide border ${
+                              isPaid 
+                                ? 'bg-green-50 text-green-700 border-green-200' 
+                                : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                            }`}>
+                              {isPaid 
+                                ? (language === 'hi' ? 'भुगतान पूर्ण' : 'Payment Completed') 
+                                : (language === 'hi' ? 'प्रक्रिया में' : 'In Progress')}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Notifications Panel */}
+            <div className="bg-white border border-gray-300 shadow-sm flex flex-col">
+              <div className="bg-[#ea580c] text-white border-b border-[#c2410c] px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bell className="w-4 h-4" />
+                  <h3 className="text-sm font-bold uppercase">
+                    {language === 'hi' ? 'सूचनाएं' : 'Notifications'}
                   </h3>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <span className="text-xs text-gray-500 block uppercase font-bold">{t('dashboard.tokenNumber')}</span>
-                  <span className="text-3xl font-black text-[#14532d] font-mono">#{activeBooking.tokenNumber}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <span className="text-xs text-gray-500 block">{language === 'hi' ? 'तारीख व समय' : 'Date & Time'}</span>
-                <span className="text-sm font-bold text-gray-900 block mt-0.5">8 Sep • 11:00 AM</span>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <span className="text-xs text-gray-500 block">{language === 'hi' ? 'फसल व मात्रा' : 'Crop & Est. Qty'}</span>
-                <span className="text-sm font-bold text-gray-900 block mt-0.5">
-                  {cropData?.emoji} {cropData?.nameEn} • {activeBooking.estimatedQuantity} Q
-                </span>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <span className="text-xs text-gray-500 block">{t('dashboard.queuePosition')}</span>
-                <span className="text-sm font-black text-[#ea580c] block mt-0.5">5th in Queue</span>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <span className="text-xs text-gray-500 block">{t('dashboard.estimatedWait')}</span>
-                <span className="text-sm font-black text-[#14532d] block mt-0.5">~35 {t('dashboard.minutes')}</span>
-              </div>
-            </div>
-
-            {/* Live Progress Bar Stepper Snippet */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Sparkles className="w-4 h-4 text-[#f97316]" />
-                <span>
-                  {language === 'hi' 
-                    ? 'कृपया टोकन समय से 15 मिनट पहले केंद्र पर रिपोर्ट करें।' 
-                    : 'Please report to the verification counter 15 minutes before slot time.'}
+                <span className="text-xs px-2 py-0.5 bg-white text-[#ea580c] font-bold rounded-sm">
+                  {farmerNotifs.length}
                 </span>
               </div>
 
-              <Link
-                href="/queue"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#14532d] text-white text-xs font-bold hover:bg-[#0f3d21] transition"
-              >
-                <span>{language === 'hi' ? 'लाइव स्टेटस व टोकन ट्रैक करें' : 'Track Live Queue Status'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* 4 QUICK ACTION TILES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          
-          <Link
-            href="/centers"
-            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#14532d] hover:-translate-y-1 transition shadow-xs group"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-[#14532d]/10 text-[#14532d] flex items-center justify-center mb-4 group-hover:scale-110 transition">
-              <CalendarCheck className="w-6 h-6" />
-            </div>
-            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.bookSlot')}</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.bookSlotDesc')}</p>
-          </Link>
-
-          <Link
-            href="/queue"
-            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-[#D4912A]/10 text-[#D4912A] flex items-center justify-center mb-4 group-hover:scale-110 transition">
-              <Clock className="w-6 h-6" />
-            </div>
-            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.trackStatus')}</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.trackStatusDesc')}</p>
-          </Link>
-
-          <Link
-            href="/payments"
-            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#14532d] hover:-translate-y-1 transition shadow-xs group"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-[#14532d]/10 text-[#14532d] flex items-center justify-center mb-4 group-hover:scale-110 transition">
-              <CreditCard className="w-6 h-6" />
-            </div>
-            <h4 className="text-base font-bold text-gray-900 mb-1">{t('dashboard.payments')}</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">{t('dashboard.paymentsDesc')}</p>
-          </Link>
-
-          <Link
-            href="/history"
-            className="p-6 rounded-3xl bg-white border border-gray-200 hover:border-[#D4912A] hover:-translate-y-1 transition shadow-xs group"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-[#D4912A]/10 text-[#D4912A] flex items-center justify-center mb-4 group-hover:scale-110 transition">
-              <FileText className="w-6 h-6" />
-            </div>
-            <h4 className="text-base font-bold text-gray-900 mb-1">{t('history.title')}</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">
-              {language === 'hi' ? 'पिछली सभी खरीद रसीदें देखें' : 'View all previous procurement receipts'}
-            </p>
-          </Link>
-
-        </div>
-
-        {/* TWO COLUMN CONTENT: RECENT ACTIVITY & NOTIFICATIONS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Recent Procurements Table / List */}
-          <div className="lg:col-span-8 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-bold text-gray-900 font-serif">
-                {language === 'hi' ? 'हालिया खरीद रिकॉर्ड' : 'Recent Procurements'}
-              </h3>
-              <Link href="/history" className="text-xs font-bold text-[#14532d] hover:underline flex items-center gap-1">
-                <span>{t('common.viewAll')}</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="space-y-3">
-              {procurementRecords.map((item) => {
-                const c = crops.find(crop => crop.type === item.cropType);
-                const isPaid = item.status === 'payment-completed';
-
-                return (
-                  <div
-                    key={item.id}
-                    className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-between gap-4"
+              <div className="p-4 flex-1 space-y-3 overflow-y-auto max-h-[400px]">
+                {farmerNotifs.map((n: Notification) => (
+                  <div 
+                    key={n.id} 
+                    className={`p-3 border-l-4 text-xs space-y-1 ${
+                      n.read 
+                        ? 'border-gray-300 bg-gray-50 text-gray-700' 
+                        : 'border-[#14532d] bg-green-50 text-gray-900 font-medium'
+                    }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className="text-2xl">{c?.emoji}</div>
-                      <div>
-                        <span className="text-sm font-bold text-gray-900 block">
-                          {language === 'hi' ? c?.nameHi : c?.nameEn} ({item.quantityQuintals} {t('history.quintals')})
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(item.createdAt, language)}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-sm">{language === 'hi' ? n.titleHi : n.title}</span>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider">SMS</span>
                     </div>
-
-                    <div className="text-right">
-                      <span className="text-sm font-black text-gray-900 block">
-                        {formatCurrency(item.totalAmount)}
-                      </span>
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md inline-block mt-0.5 ${
-                        isPaid 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-amber-100 text-amber-800'
-                      }`}>
-                        {isPaid 
-                          ? (language === 'hi' ? 'भुगतान पूर्ण' : 'Payment Completed') 
-                          : (language === 'hi' ? 'प्रक्रिया में' : 'In Progress')}
-                      </span>
-                    </div>
+                    <p className="leading-relaxed">
+                      {language === 'hi' ? n.messageHi : n.message}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Notifications Panel */}
-          <div className="lg:col-span-4 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-              <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-[#D4912A]" />
-                <h3 className="text-lg font-bold text-gray-900 font-serif">
-                  {language === 'hi' ? 'सूचनाएं' : 'Notifications'}
-                </h3>
+                ))}
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#14532d]/10 text-[#14532d] font-bold">
-                {farmerNotifs.length}
-              </span>
             </div>
 
-            <div className="space-y-3.5">
-              {farmerNotifs.map((n: Notification) => (
-                <div 
-                  key={n.id} 
-                  className={`p-3.5 rounded-2xl border text-xs space-y-1.5 transition ${
-                    n.read 
-                      ? 'border-gray-200 bg-white text-gray-600' 
-                      : 'border-[#14532d]/30 bg-[#14532d]/5 text-gray-900'
-                  }`}
-                >
-                  <div className="flex items-center justify-between font-bold">
-                    <span>{language === 'hi' ? n.titleHi : n.title}</span>
-                    <span className="text-[10px] text-gray-500">SMS</span>
-                  </div>
-                  <p className="leading-relaxed">
-                    {language === 'hi' ? n.messageHi : n.message}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
-
         </div>
-      </div>
       </div>
     </AuthGuard>
   );

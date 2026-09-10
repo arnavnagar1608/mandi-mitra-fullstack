@@ -8,20 +8,8 @@ import { apiClient } from '@/lib/api-client';
 import { 
   MapPin, 
   Clock, 
-  Users, 
-  Calendar, 
-  Filter, 
   Search, 
-  ChevronRight, 
   Phone, 
-  CheckCircle2, 
-  AlertTriangle,
-  ArrowUpDown,
-  Sparkles,
-  Building2,
-  Navigation,
-  ShieldCheck,
-  X,
   RotateCcw
 } from 'lucide-react';
 
@@ -144,382 +132,241 @@ export default function CentersPage() {
     searchQuery.trim().length > 0;
 
   return (
-    <div className="bg-white min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="bg-[#f4f5f7] min-h-screen py-6 font-sans">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* Header Title Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200 pb-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#14532d]/10 text-[#14532d] text-xs font-bold border border-[#14532d]/20">
-              <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
-              <span>{language === 'hi' ? 'मध्य प्रदेश सरकारी कृषि ई-उपार्जन मंडियां' : 'Official MP Government Procurement Mandis'}</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#14532d] font-serif tracking-tight">
-              {language === 'hi' ? 'खरीद केंद्र व मंडी खोज' : 'Mandi Procurement Centers'}
+        {/* Header Section */}
+        <div className="bg-white border-t-4 border-[#ea580c] border-x border-b border-gray-300 p-5 rounded-sm shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div className="space-y-3">
+            <h1 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide border-b-2 border-[#14532d] pb-1 inline-block">
+              {language === 'hi' ? 'कृषि उपज मंडी निर्देशिका' : 'Procurement Centre Directory'}
             </h1>
-            <p className="text-xs sm:text-sm text-gray-600 max-w-2xl leading-relaxed">
+            <p className="text-sm text-gray-700 max-w-3xl leading-relaxed">
               {language === 'hi' 
-                ? 'इंदौर, उज्जैन, भोपाल, ग्वालियर, विदिशा एवं जबलपुर संभागों की सभी 31 आधिकारिक कृषि उपज मंडियों में से अपने शहर व तहसील अनुसार केंद्र चुनें।'
-                : 'Locate certified MSP procurement hubs and Krishi Upaj Mandis across Indore, Ujjain, Bhopal, Gwalior, Vidisha, and Jabalpur regions by city and area/tehsil.'}
+                ? 'मध्य प्रदेश की आधिकारिक कृषि उपज मंडियों की सूची। अपने क्षेत्र के अनुसार केंद्र खोजें और स्लॉट बुक करें।'
+                : 'Official directory of Krishi Upaj Mandis (Procurement Centers) in Madhya Pradesh. Search by region and book slots.'}
             </p>
           </div>
-
-          {/* Crowd Recommendation Banner */}
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center gap-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-[#14532d]/15 text-[#14532d] flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5 text-[#f97316]" />
-            </div>
-            <div className="text-xs">
-              <span className="font-bold text-[#14532d] block">
-                {language === 'hi' ? 'स्मार्ट ई-उपार्जन नेटवर्क' : 'Official Project Mandis'}
+          <div className="bg-[#f8f9fa] border border-gray-300 p-3 rounded-sm flex items-center gap-3">
+            <div className="text-sm">
+              <span className="font-bold text-[#14532d] block uppercase tracking-wide">
+                {language === 'hi' ? 'ई-उपार्जन प्रणाली' : 'E-Uparjan System'}
               </span>
-              <span className="text-gray-600">
-                {language === 'hi' 
-                  ? '31 केंद्र सक्रिय • औसत प्रतीक्षा समय ~16 मिनट' 
-                  : '31 MP Mandis Active • Average Queue Time ~16 min'}
+              <span className="text-gray-600 font-medium">
+                {language === 'hi' ? 'कुल 31 सक्रिय केंद्र' : '31 Active Centers'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Quick Region Selector Tabs */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-[#14532d]" />
-              <span>{language === 'hi' ? 'संभाग अनुसार त्वरित चयन' : 'Quick City / Region Selector'}</span>
-            </span>
+        {/* Filters Section */}
+        <div className="bg-white border border-gray-300 p-5 rounded-sm shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-2">
+            <h2 className="text-base font-bold text-[#14532d] uppercase flex items-center gap-2">
+              <Search className="w-4 h-4" />
+              {language === 'hi' ? 'केंद्र खोजें' : 'Search Centers'}
+            </h2>
             {hasActiveFilters && (
               <button
                 type="button"
                 onClick={resetAllFilters}
-                className="text-xs font-semibold text-rose-700 hover:text-rose-900 flex items-center gap-1"
+                className="text-xs font-bold text-[#ea580c] hover:text-[#c2410c] uppercase flex items-center gap-1"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>{language === 'hi' ? 'सभी फिल्टर हटाएं' : 'Reset Filters'}</span>
+                {language === 'hi' ? 'रीसेट' : 'Reset'}
               </button>
             )}
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {REGIONS.map((r) => {
-              const isActive = selectedDistrict === r.id;
-              return (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => handleDistrictChange(r.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                    isActive
-                      ? 'bg-[#14532d] text-white shadow-xs scale-102'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-2xs'
-                  }`}
-                >
-                  <MapPin className={`w-3.5 h-3.5 ${isActive ? 'text-amber-300' : 'text-gray-400'}`} />
-                  <span>{language === 'hi' ? r.nameHi : r.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Systematic City & Area Dropdown Filter Bar */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-gray-200 shadow-sm space-y-4">
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3.5">
-            
-            {/* 1. City / District Dropdown Menu */}
-            <div className="lg:col-span-3 space-y-1">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                {language === 'hi' ? '1. शहर / जिला (City / District)' : '1. City / District'}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* 1. District */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase">
+                {language === 'hi' ? 'जिला (District)' : 'District'}
               </label>
-              <div className="relative">
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => handleDistrictChange(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
-                >
-                  <option value="all">{language === 'hi' ? 'सभी जिले / संभाग (All Cities)' : 'All Cities / Districts (MP)'}</option>
-                  <option value="Indore">Indore (इंदौर) — 9 Mandis</option>
-                  <option value="Ujjain">Ujjain (उज्जैन) — 5 Mandis</option>
-                  <option value="Bhopal">Bhopal (भोपाल / संभाग) — 4 Mandis</option>
-                  <option value="Gwalior">Gwalior (ग्वालियर) — 4 Mandis</option>
-                  <option value="Vidisha">Vidisha (विदिशा) — 4 Mandis</option>
-                  <option value="Jabalpur">Jabalpur (जबलपुर) — 5 Mandis</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-gray-500 text-xs">
-                  ▼
-                </div>
-              </div>
+              <select
+                value={selectedDistrict}
+                onChange={(e) => handleDistrictChange(e.target.value)}
+                className="w-full p-2 border border-gray-400 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#14532d] rounded-sm"
+              >
+                {REGIONS.map(r => (
+                  <option key={r.id} value={r.id}>{language === 'hi' ? r.nameHi : r.name}</option>
+                ))}
+              </select>
             </div>
 
-            {/* 2. Area / Tehsil Dropdown Menu (Locate area wise) */}
-            <div className="lg:col-span-3 space-y-1">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                {language === 'hi' ? '2. क्षेत्र / तहसील (Area / Tehsil)' : '2. Area / Tehsil'}
+            {/* 2. Tehsil */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase">
+                {language === 'hi' ? 'तहसील (Tehsil)' : 'Tehsil'}
               </label>
-              <div className="relative">
-                <select
-                  value={selectedTehsil}
-                  onChange={(e) => setSelectedTehsil(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
-                >
-                  <option value="all">
-                    {selectedDistrict === 'all'
-                      ? (language === 'hi' ? 'सभी क्षेत्र / तहसील (All Areas)' : 'All Areas / Tehsils')
-                      : (language === 'hi' ? `सभी क्षेत्र (${selectedDistrict})` : `All Areas in ${selectedDistrict}`)}
-                  </option>
-                  {availableTehsils.map((tehsil) => (
-                    <option key={tehsil} value={tehsil}>
-                      {tehsil} Tehsil
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-gray-500 text-xs">
-                  ▼
-                </div>
-              </div>
+              <select
+                value={selectedTehsil}
+                onChange={(e) => setSelectedTehsil(e.target.value)}
+                className="w-full p-2 border border-gray-400 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#14532d] rounded-sm"
+              >
+                <option value="all">{language === 'hi' ? 'सभी' : 'All Tehsils'}</option>
+                {availableTehsils.map((tehsil) => (
+                  <option key={tehsil} value={tehsil}>{tehsil}</option>
+                ))}
+              </select>
             </div>
 
-            {/* 3. Search Bar */}
-            <div className="lg:col-span-3 space-y-1">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                {language === 'hi' ? '3. नाम द्वारा खोजें' : '3. Search Mandi / Area'}
+            {/* 3. Text Search */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase">
+                {language === 'hi' ? 'खोज (Search)' : 'Search keyword'}
               </label>
-              <div className="relative">
-                <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={language === 'hi' ? 'उदा. Laxmibai, Sanwer, Mahidpur...' : 'e.g. Laxmibai, Sanwer, Mahidpur...'}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#14532d] transition"
-                />
-              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={language === 'hi' ? 'नाम या पता...' : 'Name or address...'}
+                className="w-full p-2 border border-gray-400 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#14532d] rounded-sm"
+              />
             </div>
 
             {/* 4. Crop Filter */}
-            <div className="lg:col-span-3 space-y-1">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">
-                {language === 'hi' ? '4. फसल (Major Crop)' : '4. Crop Filter'}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase">
+                {language === 'hi' ? 'फसल (Crop)' : 'Crop'}
               </label>
-              <div className="relative">
-                <select
-                  value={selectedCrop}
-                  onChange={(e) => setSelectedCrop(e.target.value)}
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-gray-300 bg-white text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#14532d] transition appearance-none cursor-pointer"
-                >
-                  <option value="all">{language === 'hi' ? 'सभी फसलें (All Crops)' : 'All Major Crops'}</option>
-                  {crops.map((c) => (
-                    <option key={c.type} value={c.type}>
-                      {c.emoji} {language === 'hi' ? c.nameHi : c.nameEn}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-gray-500 text-xs">
-                  ▼
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Results Summary Bar */}
-          <div className="pt-2 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#14532d]">
-                {language === 'hi' ? `उपलब्ध मंडियां: ${filteredCenters.length}` : `Showing ${filteredCenters.length} Procurement Mandis`}
-              </span>
-              {selectedDistrict !== 'all' && (
-                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-[#14532d] text-[11px] font-bold">
-                  {selectedDistrict} Region
-                </span>
-              )}
-              {selectedTehsil !== 'all' && (
-                <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[11px] font-bold">
-                  {selectedTehsil} Tehsil
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-gray-500 font-medium">
-                {language === 'hi' ? 'भीड़ स्तर:' : 'Crowd Filter:'}
-              </span>
-              <div className="inline-flex gap-1">
-                {(['all', 'low', 'moderate', 'high'] as const).map((level) => (
-                  <button
-                    key={level}
-                    type="button"
-                    onClick={() => setCrowdFilter(level)}
-                    className={`px-2 py-0.5 rounded text-[11px] font-bold transition ${
-                      crowdFilter === level
-                        ? 'bg-gray-800 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {level === 'all' ? 'All' : level.toUpperCase()}
-                  </button>
+              <select
+                value={selectedCrop}
+                onChange={(e) => setSelectedCrop(e.target.value)}
+                className="w-full p-2 border border-gray-400 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#14532d] rounded-sm"
+              >
+                <option value="all">{language === 'hi' ? 'सभी फसलें' : 'All Crops'}</option>
+                {crops.map((c) => (
+                  <option key={c.type} value={c.type}>
+                    {language === 'hi' ? c.nameHi : c.nameEn}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           </div>
-
         </div>
 
-        {/* Center Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        {/* Summary Bar */}
+        <div className="bg-[#e2e8f0] border border-gray-300 px-4 py-2 flex items-center justify-between text-sm rounded-sm">
+          <span className="font-bold text-[#14532d]">
+            {language === 'hi' ? `परिणाम: ${filteredCenters.length} केंद्र मिले` : `Results: ${filteredCenters.length} centers found`}
+          </span>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase">
+            <span className="text-gray-700">{language === 'hi' ? 'स्थिति:' : 'Status:'}</span>
+            <select
+              value={crowdFilter}
+              onChange={(e) => setCrowdFilter(e.target.value)}
+              className="p-1 border border-gray-400 bg-white text-gray-900 focus:outline-none rounded-sm"
+            >
+              <option value="all">{language === 'hi' ? 'सभी' : 'ALL'}</option>
+              <option value="low">{language === 'hi' ? 'कम' : 'LOW'}</option>
+              <option value="moderate">{language === 'hi' ? 'मध्यम' : 'MODERATE'}</option>
+              <option value="high">{language === 'hi' ? 'अधिक' : 'HIGH'}</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Data Grid / Table view simulation */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filteredCenters.map((center) => {
             const isClosed = center.status === 'closed';
 
             return (
-              <div
-                key={center.id}
-                className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  
-                  {/* Top Bar Status with City & Area Badges */}
-                  <div className="p-4 pb-3 bg-[#fafaf9] border-b border-gray-200 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {/* District Badge */}
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#14532d] text-white">
-                        {center.district}
-                      </span>
-
-                      {/* Area/Tehsil Badge */}
-                      {center.tehsil && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
-                          Tehsil: {center.tehsil}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Live Crowd Badge */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          isClosed 
-                            ? 'bg-red-500' 
-                            : center.crowdLevel === 'low' 
-                            ? 'bg-emerald-500' 
-                            : center.crowdLevel === 'moderate' 
-                            ? 'bg-amber-500' 
-                            : 'bg-rose-500'
-                        }`}
-                      />
-                      <span className="text-[10px] font-bold text-gray-600 uppercase">
-                        {center.crowdLevel}
-                      </span>
-                    </div>
+              <div key={center.id} className="bg-white border border-gray-300 rounded-sm shadow-sm flex flex-col">
+                {/* Card Header */}
+                <div className="bg-[#14532d] text-white px-4 py-2 flex justify-between items-center rounded-t-sm">
+                  <div className="text-sm font-bold uppercase truncate pr-2">
+                    {language === 'hi' ? center.nameHi : center.name}
                   </div>
-
-                  {/* Body Content */}
-                  <div className="p-5 space-y-3.5">
-                    <div>
-                      <h3 className="text-base sm:text-lg font-bold text-[#14532d] group-hover:text-[#0f3d21] transition-colors leading-snug">
-                        {language === 'hi' ? center.nameHi : center.name}
-                      </h3>
-                      <p className="text-xs text-gray-600 flex items-start gap-1.5 mt-1.5 leading-tight">
-                        <MapPin className="w-3.5 h-3.5 text-[#f97316] shrink-0 mt-0.5" />
-                        <span>{language === 'hi' ? center.addressHi : center.address}</span>
-                      </p>
-                    </div>
-
-                    {/* Operational Details Grid */}
-                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-center">
-                      <div>
-                        <span className="text-[10px] text-gray-500 block uppercase font-bold">Capacity</span>
-                        <span className="font-bold text-xs text-gray-800">{center.dailyCapacity}/day</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-gray-500 block uppercase font-bold">In Queue</span>
-                        <span className="font-bold text-xs text-[#f97316]">{center.currentQueue || 15}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-gray-500 block uppercase font-bold">Avg Wait</span>
-                        <span className="font-bold text-xs text-[#14532d]">~{center.avgProcessingTime || 16}m</span>
-                      </div>
-                    </div>
-
-                    {/* Crops Accepted Chips */}
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
-                        {language === 'hi' ? 'स्वीकृत मुख्य फसलें' : 'Major Crops Accepted'}
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {center.cropsAccepted?.map((cropKey) => {
-                          const cropData = crops.find(c => c.type === cropKey);
-                          return (
-                            <span
-                              key={cropKey}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-50 border border-gray-200 text-[11px] font-medium text-gray-800"
-                            >
-                              <span>{cropData?.emoji || '🌾'}</span>
-                              <span>{language === 'hi' ? cropData?.nameHi : cropData?.nameEn || cropKey}</span>
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Contact & Hours */}
-                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-gray-400" />
-                        <span>{language === 'hi' ? center.operatingHoursHi : center.operatingHours}</span>
-                      </span>
-                      {center.contactPhone && (
-                        <span className="flex items-center gap-1 font-mono">
-                          <Phone className="w-3 h-3 text-gray-400" />
-                          <span>{center.contactPhone}</span>
-                        </span>
-                      )}
-                    </div>
-
+                  <div className="text-xs font-bold px-2 py-0.5 bg-white text-[#14532d] rounded-sm uppercase shrink-0">
+                    {center.district}
                   </div>
                 </div>
 
-                {/* Bottom Action CTA: Book Slot */}
-                <div className="p-5 pt-0">
+                {/* Card Body */}
+                <div className="p-4 flex-1 space-y-3">
+                  <div className="flex items-start gap-2 text-sm text-gray-800">
+                    <MapPin className="w-4 h-4 text-[#ea580c] shrink-0 mt-0.5" />
+                    <span className="leading-tight">{language === 'hi' ? center.addressHi : center.address}</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-b border-gray-200 py-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 font-semibold">{language === 'hi' ? 'तहसील:' : 'Tehsil:'}</span>
+                      <span className="font-bold text-gray-900">{center.tehsil || '-'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 font-semibold">{language === 'hi' ? 'क्षमता:' : 'Capacity:'}</span>
+                      <span className="font-bold text-gray-900">{center.dailyCapacity}/day</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 font-semibold">{language === 'hi' ? 'कतार:' : 'Queue:'}</span>
+                      <span className="font-bold text-[#ea580c]">{center.currentQueue || 15}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 font-semibold">{language === 'hi' ? 'प्रतीक्षा समय:' : 'Wait Time:'}</span>
+                      <span className="font-bold text-[#14532d]">~{center.avgProcessingTime || 16}m</span>
+                    </div>
+                  </div>
+
+                  <div className="text-sm">
+                    <span className="text-gray-600 font-semibold block mb-1">
+                      {language === 'hi' ? 'स्वीकृत फसलें:' : 'Accepted Crops:'}
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {center.cropsAccepted?.map((cropKey) => {
+                        const cropData = crops.find(c => c.type === cropKey);
+                        return (
+                          <span key={cropKey} className="px-2 py-0.5 bg-gray-100 border border-gray-300 text-xs font-bold text-gray-800 uppercase rounded-sm">
+                            {language === 'hi' ? cropData?.nameHi : cropData?.nameEn || cropKey}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-gray-700 bg-gray-50 p-2 border border-gray-200">
+                    <span className="flex items-center gap-1 font-semibold">
+                      <Clock className="w-3.5 h-3.5" />
+                      {language === 'hi' ? center.operatingHoursHi : center.operatingHours}
+                    </span>
+                    {center.contactPhone && (
+                      <span className="flex items-center gap-1 font-semibold">
+                        <Phone className="w-3.5 h-3.5" />
+                        {center.contactPhone}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card Footer Action */}
+                <div className="px-4 pb-4">
                   <Link
                     href={`/centers/${center.id}`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition"
+                    className="block w-full py-2 bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-bold uppercase text-center rounded-sm border border-[#9a3412] transition-colors"
                   >
-                    <span>{language === 'hi' ? 'स्लॉट बुक करें (Book Delivery Slot)' : 'Select Mandi & Book Slot'}</span>
-                    <ChevronRight className="w-4 h-4" />
+                    {language === 'hi' ? 'प्रोसीड टू बुकिंग' : 'Proceed to Booking'}
                   </Link>
                 </div>
-
               </div>
             );
           })}
         </div>
 
-        {/* Empty State */}
         {filteredCenters.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-3xl border border-gray-200 p-8 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto">
-              <Search className="w-8 h-8" />
+          <div className="bg-white border border-gray-300 p-8 text-center rounded-sm shadow-sm space-y-3">
+            <div className="text-gray-400 mb-2">
+              <Search className="w-8 h-8 mx-auto" />
             </div>
-            <h3 className="text-lg font-bold text-gray-800 font-serif">
-              {language === 'hi' ? 'चयनित फिल्टर के अनुसार कोई केंद्र नहीं मिला' : 'No Procurement Mandis Match Your Criteria'}
+            <h3 className="text-lg font-bold text-[#14532d] uppercase">
+              {language === 'hi' ? 'कोई डेटा नहीं मिला' : 'No Data Found'}
             </h3>
-            <p className="text-xs text-gray-600 max-w-sm mx-auto">
-              {language === 'hi' 
-                ? 'कृपया शहर या तहसील ड्रॉपडाउन बदलें, या सभी फिल्टर हटाने के लिए रीसेट करें।' 
-                : 'Please select a different City / Tehsil from the dropdown menu, or click Reset Filters.'}
+            <p className="text-sm text-gray-600">
+              {language === 'hi' ? 'कृपया अपनी खोज बदलें।' : 'Please adjust your search criteria.'}
             </p>
-            <button
-              type="button"
-              onClick={resetAllFilters}
-              className="px-5 py-2.5 rounded-xl bg-[#14532d] text-white text-xs font-bold shadow-xs hover:bg-[#0f3d21] transition"
-            >
-              {language === 'hi' ? 'सभी 31 मंडियां देखें' : 'View All 31 Mandis'}
-            </button>
           </div>
         )}
-
       </div>
     </div>
   );

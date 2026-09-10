@@ -311,10 +311,10 @@ export default function AdminDashboardPage() {
 
   if (isCheckingSession) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-[#14532d] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-semibold text-[#14532d]">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-3 bg-white p-6 border border-gray-300 shadow-sm rounded-sm">
+          <div className="w-8 h-8 border-4 border-[#14532d] border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-bold text-[#14532d]">
             {language === 'hi' ? 'अधिकारी सत्र सत्यापित किया जा रहा है...' : 'Verifying Officer Session...'}
           </span>
         </div>
@@ -327,56 +327,56 @@ export default function AdminDashboardPage() {
   // ══════════════════════════════════════════════════════════════════════════════
   if (!officer) {
     return (
-      <div className="bg-white min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-        <div className="max-w-xl mx-auto w-full space-y-6">
+      <div className="bg-gray-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+        <div className="max-w-2xl mx-auto w-full space-y-4">
           
           {/* Government Portal Header */}
-          <div className="text-center space-y-3">
+          <div className="text-center space-y-2 bg-white p-4 border border-gray-300 shadow-sm rounded-sm">
             <div className="flex justify-center items-center gap-3">
               <Image
                 src="/emblem-of-india.svg"
                 alt="Emblem of India"
                 width={40}
                 height={60}
-                className="h-14 w-auto object-contain"
+                className="h-16 w-auto object-contain"
                 priority
               />
             </div>
             <div>
-              <span className="text-xs font-bold tracking-wider text-gray-700 uppercase block">
+              <span className="text-sm font-bold tracking-wider text-gray-800 uppercase block">
                 {language === 'hi' 
                   ? 'भारत सरकार • कृषि एवं किसान कल्याण मंत्रालय' 
                   : 'Government of India • Ministry of Agriculture & Farmers Welfare'}
               </span>
-              <span className="text-[11px] text-gray-500 font-medium block">
+              <span className="text-xs text-gray-600 font-bold block mt-1">
                 {language === 'hi' 
                   ? 'खाद्य एवं सार्वजनिक वितरण विभाग • राष्ट्रीय ई-उपार्जन प्रणाली' 
                   : 'Department of Food & Public Distribution • National E-Procurement'}
               </span>
             </div>
 
-            <div className="pt-2">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#14532d] text-amber-300 text-xs font-bold tracking-wide shadow-xs">
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <div className="pt-2 border-t border-gray-200 mt-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#14532d] text-white text-xs font-bold shadow-sm rounded-sm mt-2">
+                <Lock className="w-3.5 h-3.5 text-white" />
                 <span>{language === 'hi' ? 'अधिकारी नियंत्रण कक्ष • सुरक्षित पोर्टल' : 'Official Officer Portal • Restricted Access'}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#14532d] font-serif mt-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#14532d] mt-3">
                 {language === 'hi' ? 'मंडी अधिकारी / केंद्र प्रभारी लॉगिन' : "Officer's Desk & Admin Login"}
               </h1>
-              <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto mt-1">
-                {language === 'hi'
-                  ? 'यह पोर्टल केवल अधिकृत खरीद प्रभारियों, मंडी निरीक्षकों और प्रशासनिक अधिकारियों के लिए सुरक्षित है।'
-                  : 'This desk is strictly restricted to designated Procurement In-Charges, Mandi Inspectors, and Authorized Admins.'}
-              </p>
             </div>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-xl space-y-6">
+          <div className="bg-white p-6 sm:p-8 border border-gray-300 shadow-sm rounded-sm space-y-6">
+            <div className="border-b border-gray-300 pb-2 mb-4">
+              <h2 className="text-lg font-bold text-gray-800 uppercase">
+                {language === 'hi' ? 'प्राधिकृत लॉगिन' : 'Authorized Login'}
+              </h2>
+            </div>
             
             {/* Error Notification */}
             {loginError && (
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
+              <div className="p-3 bg-red-50 border border-red-300 text-red-800 text-xs sm:text-sm flex items-start gap-3 rounded-sm">
                 <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <div className="font-bold">{language === 'hi' ? 'प्रवेश अस्वीकृत (Access Denied)' : 'Authentication Failed'}</div>
@@ -385,15 +385,15 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            <form onSubmit={handleOfficerLogin} className="space-y-4">
+            <form onSubmit={handleOfficerLogin} className="space-y-5">
               
               {/* Officer ID */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
                   {language === 'hi' ? 'अधिकारी पहचान पत्र / लॉगिन आईडी' : 'Officer ID / Official Login ID'}
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                     <UserCheck className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <input
@@ -401,21 +401,21 @@ export default function AdminDashboardPage() {
                     required
                     value={officerId}
                     onChange={(e) => setOfficerId(e.target.value)}
-                    placeholder={language === 'hi' ? 'उदा. OFFICER-MP-001 या अधिकारी ईमेल' : 'e.g. OFFICER-MP-001 or admin@mandimitra.gov.in'}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800"
+                    placeholder={language === 'hi' ? 'उदा. OFFICER-MP-001' : 'e.g. OFFICER-MP-001'}
+                    className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
                   />
                 </div>
               </div>
 
               {/* Password */}
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-xs font-bold text-gray-800 uppercase">
                     {language === 'hi' ? 'सुरक्षा पासवर्ड / एक्सेस की' : 'Official Password / Access Key'}
                   </label>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                     <KeyRound className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <input
@@ -424,12 +424,12 @@ export default function AdminDashboardPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800"
+                    className="w-full pl-9 pr-9 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -438,17 +438,17 @@ export default function AdminDashboardPage() {
 
               {/* Mandi Center Selection */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
                   {language === 'hi' ? 'संबंधित खरीद केंद्र (Assigned Mandi Center)' : 'Procurement Center Assignment'}
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                     <Building2 className="w-4 h-4 text-[#14532d]" />
                   </div>
                   <select
                     value={selectedCenter}
                     onChange={(e) => setSelectedCenter(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] focus:border-transparent font-medium text-gray-800 bg-white"
+                    className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800 bg-white"
                   >
                     <option value="c1">Bhopal Central Mandi (भोपाल सेंट्रल मंडी - c1)</option>
                     <option value="c2">Indore Mandi Complex (इंदौर मंडी कॉम्प्लेक्स - c2)</option>
@@ -460,17 +460,17 @@ export default function AdminDashboardPage() {
 
               {/* Security Captcha */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
                   {language === 'hi' ? 'सुरक्षा सत्यापन (Captcha)' : 'Security Verification Code'}
                 </label>
                 <div className="flex items-center gap-3">
-                  <div className="px-4 py-2.5 rounded-xl bg-gray-100 border border-gray-300 font-mono text-lg font-extrabold tracking-widest text-gray-800 select-none line-through decoration-gray-400">
+                  <div className="px-4 py-2 bg-gray-200 border border-gray-400 font-mono text-lg font-bold tracking-widest text-gray-800 select-none line-through decoration-gray-500 rounded-sm">
                     {captchaCode}
                   </div>
                   <button
                     type="button"
                     onClick={generateCaptcha}
-                    className="p-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-600 transition"
+                    className="p-2 border border-gray-400 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm"
                     title="Generate New Code"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -481,8 +481,8 @@ export default function AdminDashboardPage() {
                     maxLength={6}
                     value={captchaInput}
                     onChange={(e) => setCaptchaInput(e.target.value)}
-                    placeholder="Enter code"
-                    className="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] font-mono font-bold"
+                    placeholder={language === 'hi' ? 'कोड दर्ज करें' : 'Enter code'}
+                    className="flex-1 py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] font-mono font-bold rounded-sm"
                   />
                 </div>
               </div>
@@ -491,14 +491,14 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full mt-2 py-3.5 px-4 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full mt-4 py-2.5 px-4 bg-[#14532d] hover:bg-[#115e32] text-white font-bold text-sm border border-[#0f3d21] shadow-sm rounded-sm flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {isSubmitting ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <Lock className="w-4 h-4 text-amber-300" />
-                    <span>{language === 'hi' ? 'अधिकारी डेस्क में प्रवेश करें' : 'Sign In to Officer’s Desk'}</span>
+                    <Lock className="w-4 h-4 text-white" />
+                    <span className="uppercase tracking-wide">{language === 'hi' ? 'अधिकारी डेस्क में प्रवेश करें' : 'Sign In to Officer’s Desk'}</span>
                   </>
                 )}
               </button>
@@ -506,55 +506,56 @@ export default function AdminDashboardPage() {
             </form>
 
             {/* Quick Demo Credentials Helper */}
-            <div className="pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700 mb-2.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#f97316]" />
+            <div className="pt-4 border-t border-gray-300 mt-6">
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-800 mb-3 bg-gray-100 p-2 border border-gray-300 rounded-sm">
+                <Sparkles className="w-4 h-4 text-[#f97316]" />
                 <span>{language === 'hi' ? 'परीक्षण क्रेडेंशियल्स (One-Click Demo Login)' : 'Authorized Evaluation Credentials'}</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => handleAutofill('officer1')}
-                  className="text-left p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 transition text-xs space-y-0.5"
+                  className="text-left p-3 bg-white border border-gray-400 hover:bg-gray-50 text-xs space-y-1 rounded-sm shadow-sm"
                 >
                   <div className="font-bold text-[#14532d] flex items-center justify-between">
-                    <span>Officer (Bhopal Mandi)</span>
-                    <span className="text-[10px] bg-emerald-200/80 text-[#14532d] px-1.5 py-0.2 rounded">In-Charge</span>
+                    <span>{language === 'hi' ? 'अधिकारी (भोपाल मंडी)' : 'Officer (Bhopal Mandi)'}</span>
+                    <span className="text-[10px] bg-gray-200 text-gray-800 border border-gray-300 px-1.5 py-0.5 rounded-sm">{language === 'hi' ? 'प्रभारी' : 'In-Charge'}</span>
                   </div>
-                  <div className="text-[11px] text-gray-600 font-mono">ID: OFFICER-MP-001</div>
-                  <div className="text-[11px] text-gray-500 font-mono">Pass: Mandi@Officer2026</div>
+                  <div className="text-[11px] text-gray-700 font-mono">ID: OFFICER-MP-001</div>
+                  <div className="text-[11px] text-gray-700 font-mono">Pass: Mandi@Officer2026</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleAutofill('superadmin')}
-                  className="text-left p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 transition text-xs space-y-0.5"
+                  className="text-left p-3 bg-white border border-gray-400 hover:bg-gray-50 text-xs space-y-1 rounded-sm shadow-sm"
                 >
-                  <div className="font-bold text-amber-900 flex items-center justify-between">
-                    <span>Super Administrator</span>
-                    <span className="text-[10px] bg-amber-200/80 text-amber-900 px-1.5 py-0.2 rounded">HQ</span>
+                  <div className="font-bold text-[#14532d] flex items-center justify-between">
+                    <span>{language === 'hi' ? 'सुपर एडमिनिस्ट्रेटर' : 'Super Administrator'}</span>
+                    <span className="text-[10px] bg-gray-200 text-gray-800 border border-gray-300 px-1.5 py-0.5 rounded-sm">{language === 'hi' ? 'मुख्यालय' : 'HQ'}</span>
                   </div>
-                  <div className="text-[11px] text-gray-600 font-mono">ID: SUPER-ADMIN-01</div>
-                  <div className="text-[11px] text-gray-500 font-mono">Pass: Super@Admin2026</div>
+                  <div className="text-[11px] text-gray-700 font-mono">ID: SUPER-ADMIN-01</div>
+                  <div className="text-[11px] text-gray-700 font-mono">Pass: Super@Admin2026</div>
                 </button>
               </div>
             </div>
 
             {/* Official Security Disclaimer */}
-            <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 text-[11px] text-gray-600 flex items-start gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#14532d] shrink-0 mt-0.5" />
+            <div className="bg-red-50 border border-red-200 p-3 text-[11px] text-red-800 font-semibold flex items-start gap-2 rounded-sm mt-4">
+              <ShieldCheck className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
               <span>
                 {language === 'hi'
                   ? 'सुरक्षा सूचना: यह एक आधिकारिक सरकारी खरीद प्रबंधन प्रणाली है। अनधिकृत प्रवेश का प्रयास आईटी अधिनियम के तहत दंडनीय है।'
-                  : 'Security Notice: This is an official agricultural procurement console. All operations and audit trails are logged under government IT compliance guidelines.'}
+                  : 'Security Notice: This is an official agricultural procurement console. Unauthorized access is punishable under the IT Act.'}
               </span>
             </div>
 
           </div>
 
-          <div className="text-center">
-            <Link href="/" className="text-xs font-semibold text-[#14532d] hover:underline">
-              ← {language === 'hi' ? 'नागरिक मुख्य पृष्ठ पर लौटें' : 'Return to Citizen Public Portal'}
+          <div className="text-center mt-4 pb-8">
+            <Link href="/" className="text-xs font-bold text-[#14532d] hover:underline flex items-center justify-center gap-1">
+              <span>←</span>
+              <span>{language === 'hi' ? 'नागरिक मुख्य पृष्ठ पर लौटें' : 'Return to Citizen Public Portal'}</span>
             </Link>
           </div>
 
@@ -567,38 +568,38 @@ export default function AdminDashboardPage() {
   // VIEW 2: UNLOCKED — OPERATIONAL OFFICER DESK / ADMIN PANEL
   // ══════════════════════════════════════════════════════════════════════════════
   return (
-    <div className="bg-white min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="bg-gray-100 min-h-screen py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* Top Active Officer Clearance Banner */}
-        <div className="bg-[#14532d] text-white rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-8 border-[#f97316]">
-          <div className="flex items-center gap-3.5">
-            <div className="relative flex items-center justify-center shrink-0">
+        <div className="bg-white border border-gray-400 shadow-sm p-4 rounded-sm flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-[#f97316]">
+          <div className="flex items-center gap-4">
+            <div className="relative flex items-center justify-center shrink-0 bg-gray-100 p-2 border border-gray-300 rounded-sm">
               <Image
                 src="/emblem-of-india.svg"
                 alt="Emblem of India"
-                width={32}
-                height={48}
-                className="h-11 w-auto object-contain brightness-0 invert"
+                width={28}
+                height={40}
+                className="h-10 w-auto object-contain"
                 priority
               />
             </div>
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400 text-[#14532d]">
-                  {language === 'hi' ? 'सक्रिय अधिकारी सत्र' : 'VERIFIED OFFICIAL SESSION'}
+                <span className="inline-flex items-center px-2 py-0.5 border border-[#14532d] bg-[#14532d] text-white text-[10px] font-bold uppercase rounded-sm">
+                  {language === 'hi' ? 'सक्रिय सत्र' : 'ACTIVE SESSION'}
                 </span>
-                <span className="text-xs text-green-200">
-                  ID: <span className="font-mono font-bold text-white">{officer.officerId}</span>
+                <span className="text-xs font-bold text-gray-700">
+                  ID: <span className="font-mono text-[#14532d]">{officer.officerId}</span>
                 </span>
               </div>
-              <h2 className="text-lg sm:text-xl font-bold font-serif text-white">
+              <h2 className="text-lg font-bold text-gray-900 uppercase">
                 {language === 'hi' ? (officer.nameHi || officer.name) : officer.name}
               </h2>
-              <div className="text-xs text-green-100 flex items-center gap-2">
+              <div className="text-xs text-gray-600 font-semibold flex items-center gap-2 uppercase tracking-wide">
                 <span>{language === 'hi' ? (officer.designationHi || officer.designation) : officer.designation}</span>
                 <span>•</span>
-                <span className="text-amber-300 font-semibold">{officer.centerName || 'Bhopal Central Mandi'}</span>
+                <span className="text-[#f97316] font-bold">{language === 'hi' ? (officer.centerNameHi || officer.centerName || 'भोपाल सेंट्रल मंडी') : (officer.centerName || 'Bhopal Central Mandi')}</span>
               </div>
             </div>
           </div>
@@ -607,7 +608,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-3 self-end md:self-center">
             <button
               onClick={handleCallNext}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#f97316] hover:bg-[#ea580c] text-white text-xs sm:text-sm font-bold shadow-sm transition"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#f97316] hover:bg-[#ea580c] text-white text-xs font-bold border border-[#c2410c] rounded-sm shadow-sm transition uppercase"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>{t('admin.callNext')} (#{currentServing + 1})</span>
@@ -615,107 +616,102 @@ export default function AdminDashboardPage() {
 
             <button
               onClick={handleOfficerLogout}
-              className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-red-700/90 hover:bg-red-800 text-white text-xs sm:text-sm font-bold transition border border-red-500/50 shadow-sm"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-gray-50 text-red-700 text-xs font-bold border border-red-300 rounded-sm shadow-sm transition uppercase"
               title="Lock Officer Desk & Logout"
             >
               <LogOut className="w-4 h-4" />
-              <span>{language === 'hi' ? 'डेस्क लॉक / लॉगआउट' : 'Lock Desk & Logout'}</span>
+              <span>{language === 'hi' ? 'लॉगआउट' : 'LOGOUT'}</span>
             </button>
           </div>
         </div>
 
         {/* Section Sub-heading */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-4">
+        <div className="bg-[#14532d] text-white p-3 rounded-sm flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm border border-[#0f3d21]">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 font-serif">
+            <h1 className="text-lg sm:text-xl font-bold uppercase tracking-wide">
               {t('admin.title')}
             </h1>
-            <p className="text-xs sm:text-sm text-gray-600">
-              {language === 'hi' 
-                ? 'लाइव कतार प्रबंधन, इलेक्ट्रॉनिक तौल सत्यापन, पारदर्शी एमएसपी खरीद एवं आवक नियंत्रण।' 
-                : 'Real-time live queue management, digital weighbridge integration, and daily capacity monitoring.'}
-            </p>
           </div>
-          <div className="text-xs text-gray-500 font-medium">
-            Mandi Operational Status: <span className="text-[#14532d] font-bold">ONLINE (Gate Weighbridge Active)</span>
+          <div className="text-xs font-bold bg-white text-[#14532d] px-2 py-1 rounded-sm shadow-sm border border-gray-300">
+            {language === 'hi' ? 'स्थिति: ऑनलाइन (गेट वेब्रिज सक्रिय)' : 'STATUS: ONLINE (Gate Weighbridge Active)'}
           </div>
         </div>
 
         {/* 5 KEY DAILY COUNTERS */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           
-          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
-            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.totalSlots')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">200</span>
-            <span className="text-[10px] text-[#14532d] font-semibold">100% capacity ready</span>
+          <div className="bg-white p-4 border border-gray-300 shadow-sm rounded-sm">
+            <span className="text-[10px] text-gray-500 uppercase font-bold block border-b border-gray-200 pb-1 mb-2">{t('admin.totalSlots')}</span>
+            <span className="text-2xl font-bold text-gray-900 block">200</span>
+            <span className="text-[10px] text-[#14532d] font-bold">{language === 'hi' ? '100% क्षमता तैयार' : '100% CAPACITY READY'}</span>
           </div>
 
-          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
-            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.farmersArrived')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">178</span>
-            <span className="text-[10px] text-[#14532d] font-semibold">Gate verified via QR</span>
+          <div className="bg-white p-4 border border-gray-300 shadow-sm rounded-sm">
+            <span className="text-[10px] text-gray-500 uppercase font-bold block border-b border-gray-200 pb-1 mb-2">{t('admin.farmersArrived')}</span>
+            <span className="text-2xl font-bold text-gray-900 block">178</span>
+            <span className="text-[10px] text-[#14532d] font-bold">{language === 'hi' ? 'क्यूआर द्वारा गेट सत्यापित' : 'GATE VERIFIED VIA QR'}</span>
           </div>
 
-          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
-            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.processed')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#14532d] mt-1 block">156</span>
-            <span className="text-[10px] text-[#14532d] font-semibold">Parchi generated</span>
+          <div className="bg-white p-4 border border-gray-300 shadow-sm rounded-sm">
+            <span className="text-[10px] text-gray-500 uppercase font-bold block border-b border-gray-200 pb-1 mb-2">{t('admin.processed')}</span>
+            <span className="text-2xl font-bold text-[#14532d] block">156</span>
+            <span className="text-[10px] text-[#14532d] font-bold">{language === 'hi' ? 'पर्ची जनरेट की गई' : 'PARCHI GENERATED'}</span>
           </div>
 
-          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs">
-            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.inQueue')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-[#D4912A] mt-1 block">22</span>
-            <span className="text-[10px] text-[#D4912A] font-semibold">Expected wait ~25m</span>
+          <div className="bg-white p-4 border border-gray-300 shadow-sm rounded-sm">
+            <span className="text-[10px] text-gray-500 uppercase font-bold block border-b border-gray-200 pb-1 mb-2">{t('admin.inQueue')}</span>
+            <span className="text-2xl font-bold text-[#f97316] block">22</span>
+            <span className="text-[10px] text-[#f97316] font-bold">{language === 'hi' ? 'संभावित प्रतीक्षा ~25 मिनट' : 'EXPECTED WAIT ~25M'}</span>
           </div>
 
-          <div className="bg-white p-5 rounded-3xl border border-gray-200 shadow-xs col-span-2 sm:col-span-1">
-            <span className="text-[11px] text-gray-500 uppercase font-bold block">{t('admin.avgProcessTime')}</span>
-            <span className="text-2xl sm:text-3xl font-black text-gray-900 mt-1 block">18 min</span>
-            <span className="text-[10px] text-[#14532d] font-semibold">4m faster than norm</span>
+          <div className="bg-white p-4 border border-gray-300 shadow-sm rounded-sm col-span-2 sm:col-span-1">
+            <span className="text-[10px] text-gray-500 uppercase font-bold block border-b border-gray-200 pb-1 mb-2">{t('admin.avgProcessTime')}</span>
+            <span className="text-2xl font-bold text-gray-900 block">18 MIN</span>
+            <span className="text-[10px] text-[#14532d] font-bold">{language === 'hi' ? 'सामान्य से 4 मिनट तेज' : '4M FASTER THAN NORM'}</span>
           </div>
 
         </div>
 
         {/* AI CROWD PREDICTION NOTICE */}
-        <div className="bg-gray-50 border border-gray-200 p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#D4912A] text-white flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5" />
+        <div className="bg-[#fff7ed] border border-[#fbd38d] p-4 rounded-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#f97316] text-white flex items-center justify-center shrink-0 rounded-sm">
+              <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-gray-900">
+              <h4 className="text-sm font-bold text-[#9a3412] uppercase tracking-wide">
                 {language === 'hi' ? 'एआई भीड़ पूर्वानुमान प्रणाली (AI Crowd Forecast)' : 'AI-Driven Arrival Surge Prediction'}
               </h4>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-[#9a3412] font-medium mt-0.5">
                 {language === 'hi' 
                   ? 'कल सुबह 9:00 - 11:30 बजे भारी भीड़ (92% क्षमता) संभावित है। किसानों को 2:00 PM स्लॉट की स्वचालित सलाह भेजी गई।' 
                   : 'Surge anticipated tomorrow 9:00 - 11:30 AM (92% load). Automated SMS advice sent encouraging afternoon slots.'}
               </p>
             </div>
           </div>
-          <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#D4912A]/20 text-[#B87A1F] whitespace-nowrap">
-            MODEL ACCURACY: 94.2%
+          <span className="px-2 py-1 bg-[#f97316] text-white text-[10px] font-bold uppercase rounded-sm whitespace-nowrap shadow-sm">
+            {language === 'hi' ? 'मॉडल सटीकता: 94.2%' : 'MODEL ACCURACY: 94.2%'}
           </span>
         </div>
 
         {/* ADMIN INTERACTION TABS */}
-        <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+        <div className="flex items-center gap-1 border-b-2 border-[#14532d]">
           <button
             onClick={() => setActiveTab('queue')}
-            className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition ${
+            className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
               activeTab === 'queue'
-                ? 'bg-[#14532d] text-white shadow-xs'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-[#14532d] text-white'
+                : 'bg-white text-gray-600 border border-gray-300 border-b-0 hover:bg-gray-50'
             }`}
           >
             {t('admin.liveQueue')}
           </button>
           <button
             onClick={() => setActiveTab('analytics')}
-            className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition ${
+            className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
               activeTab === 'analytics'
-                ? 'bg-[#14532d] text-white shadow-xs'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-[#14532d] text-white'
+                : 'bg-white text-gray-600 border border-gray-300 border-b-0 hover:bg-gray-50'
             }`}
           >
             {language === 'hi' ? 'आवक विश्लेषण' : 'Hourly Arrivals & Crops'}
@@ -724,38 +720,40 @@ export default function AdminDashboardPage() {
 
         {/* TAB 1: LIVE QUEUE SEQUENCING */}
         {activeTab === 'queue' && (
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-white border border-gray-300 shadow-sm rounded-sm overflow-hidden">
+            <div className="p-4 bg-gray-100 border-b border-gray-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 font-serif">
+                <h3 className="text-md font-bold text-gray-800 uppercase">
                   {language === 'hi' ? 'आज की किसान कतार अनुक्रम' : "Today's Active Token Roster"}
                 </h3>
-                <span className="text-xs text-gray-500">Showing {queue.length} farmers registered • Active Center: {officer.centerName || 'Bhopal Central Mandi'}</span>
+                <span className="text-[11px] font-bold text-gray-500 uppercase">
+                  {language === 'hi' ? 'कुल' : 'Total'}: {queue.length} {language === 'hi' ? 'रिकॉर्ड्स' : 'Records'} • {language === 'hi' ? 'केंद्र' : 'Center'}: {language === 'hi' ? (officer.centerNameHi || officer.centerName) : officer.centerName || 'Bhopal Central Mandi'}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => fetchRoster()} 
-                  className="px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-1.5"
+                  className="px-3 py-1.5 bg-white border border-gray-400 text-xs font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-1 rounded-sm shadow-sm"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Refresh Queue</span>
+                  <span className="uppercase">{language === 'hi' ? 'कतार रीफ्रेश करें' : 'Refresh Queue'}</span>
                 </button>
               </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 uppercase font-bold">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-[#14532d] text-white uppercase font-bold tracking-wide">
                   <tr>
-                    <th className="py-3.5 px-6">{t('admin.tokenNo')}</th>
-                    <th className="py-3.5 px-6">{t('admin.farmerName')}</th>
-                    <th className="py-3.5 px-6">{t('admin.cropType')}</th>
-                    <th className="py-3.5 px-6">{t('admin.weight')}</th>
-                    <th className="py-3.5 px-6">{t('payments.status')}</th>
-                    <th className="py-3.5 px-6 text-right">{t('admin.action')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300">{t('admin.tokenNo')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300">{t('admin.farmerName')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300">{t('admin.cropType')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300">{t('admin.weight')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300">{t('payments.status')}</th>
+                    <th className="py-2.5 px-4 border border-gray-300 text-center">{t('admin.action')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-300">
                   {queue.map((farmer) => {
                     const c = crops.find(crop => crop.type === farmer.cropType);
                     const isInProgress = farmer.status === 'in-progress';
@@ -765,59 +763,59 @@ export default function AdminDashboardPage() {
                       <tr 
                         key={farmer.tokenNumber} 
                         className={`hover:bg-gray-50 transition ${
-                          isInProgress ? 'bg-[#14532d]/10 font-medium' : ''
+                          isInProgress ? 'bg-amber-50 font-bold' : ''
                         }`}
                       >
-                        <td className="py-4 px-6 font-mono font-bold text-sm">
+                        <td className="py-2.5 px-4 border border-gray-300 font-mono font-bold text-sm text-gray-800">
                           #{farmer.tokenNumber}
                         </td>
-                        <td className="py-4 px-6">
-                          <span className="font-bold text-gray-900 block">
+                        <td className="py-2.5 px-4 border border-gray-300">
+                          <span className="font-bold text-gray-900 block uppercase">
                             {language === 'hi' ? farmer.farmerNameHi : farmer.farmerName}
                           </span>
-                          <span className="text-[11px] text-gray-500">{farmer.phone}</span>
+                          <span className="text-[10px] font-bold text-gray-500">{farmer.phone}</span>
                         </td>
-                        <td className="py-4 px-6">
-                          <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
+                        <td className="py-2.5 px-4 border border-gray-300">
+                          <span className="inline-flex items-center gap-1 font-bold text-gray-800 uppercase">
                             <span>{c?.emoji}</span>
                             <span>{language === 'hi' ? c?.nameHi : c?.nameEn}</span>
                           </span>
                         </td>
-                        <td className="py-4 px-6 font-bold text-gray-900">
-                          {farmer.quantity} Quintals
+                        <td className="py-2.5 px-4 border border-gray-300 font-bold text-gray-800 uppercase">
+                          {farmer.quantity} {language === 'hi' ? 'क्विंटल' : 'Quintals'}
                         </td>
-                        <td className="py-4 px-6">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        <td className="py-2.5 px-4 border border-gray-300">
+                          <span className={`px-2 py-1 border text-[10px] font-bold uppercase rounded-sm ${
                             isInProgress 
-                              ? 'bg-amber-100 text-amber-800 animate-pulse' 
+                              ? 'bg-amber-100 text-amber-800 border-amber-300' 
                               : isDone 
-                              ? 'bg-emerald-100 text-emerald-800' 
-                              : 'bg-stone-200 text-stone-700'
+                              ? 'bg-emerald-100 text-[#14532d] border-[#14532d]' 
+                              : 'bg-gray-200 text-gray-700 border-gray-400'
                           }`}>
-                            {farmer.status.toUpperCase()}
+                            {farmer.status}
                           </span>
                         </td>
-                        <td className="py-4 px-6 text-right">
+                        <td className="py-2.5 px-4 border border-gray-300 text-center">
                           {farmer.status === 'waiting' && (
                             <button
                               onClick={() => handleStatusChange(farmer.tokenNumber, 'in-progress')}
-                              className="px-3 py-1.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold transition text-[11px]"
+                              className="px-3 py-1 bg-[#14532d] hover:bg-[#115e32] text-white font-bold uppercase border border-[#0f3d21] rounded-sm shadow-sm transition text-[10px]"
                             >
-                              Call In
+                              {language === 'hi' ? 'अंदर बुलाएं' : 'Call In'}
                             </button>
                           )}
                           {farmer.status === 'in-progress' && (
                             <button
                               onClick={() => handleStatusChange(farmer.tokenNumber, 'completed')}
-                              className="px-3 py-1.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold transition text-[11px]"
+                              className="px-3 py-1 bg-[#f97316] hover:bg-[#ea580c] text-white font-bold uppercase border border-[#c2410c] rounded-sm shadow-sm transition text-[10px]"
                             >
-                              Approve Parchi
+                              {language === 'hi' ? 'पर्ची स्वीकृत करें' : 'Approve Parchi'}
                             </button>
                           )}
                           {farmer.status === 'completed' && (
-                            <span className="text-[#14532d] font-bold text-xs inline-flex items-center gap-1">
-                              <CheckCircle2 className="w-4 h-4" />
-                              <span>Complete</span>
+                            <span className="text-[#14532d] font-bold text-[10px] uppercase inline-flex items-center gap-1 justify-center w-full">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>{language === 'hi' ? 'पूर्ण' : 'Complete'}</span>
                             </span>
                           )}
                         </td>
@@ -832,28 +830,30 @@ export default function AdminDashboardPage() {
 
         {/* TAB 2: ANALYTICS & HOURLY LOAD */}
         {activeTab === 'analytics' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             {/* Hourly Distribution Visual */}
-            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 font-serif">
-                {t('admin.hourlyArrivals')}
-              </h3>
+            <div className="lg:col-span-7 bg-white p-5 border border-gray-300 shadow-sm rounded-sm space-y-4">
+              <div className="border-b border-gray-300 pb-2">
+                <h3 className="text-md font-bold text-gray-800 uppercase">
+                  {t('admin.hourlyArrivals')}
+                </h3>
+              </div>
               
               <div className="space-y-3">
                 {hourlyArrivalsData.map((item) => (
                   <div key={item.hour} className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold text-gray-600">
+                    <div className="flex justify-between text-xs font-bold text-gray-700 uppercase">
                       <span>{item.hour}</span>
-                      <span>{item.arrivals} farmers</span>
+                      <span>{item.arrivals} {language === 'hi' ? 'किसान' : 'farmers'}</span>
                     </div>
-                    <div className="w-full h-3 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="w-full h-4 bg-gray-200 border border-gray-300 rounded-sm overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
+                        className={`h-full ${
                           item.arrivals > 35 
-                            ? 'bg-[#C75B3A]' 
+                            ? 'bg-[#c2410c]' 
                             : item.arrivals > 20 
-                            ? 'bg-[#D4912A]' 
+                            ? 'bg-[#f97316]' 
                             : 'bg-[#14532d]'
                         }`}
                         style={{ width: `${(item.arrivals / 50) * 100}%` }}
@@ -865,24 +865,26 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Crop Wise Acceptance Ratio */}
-            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 border border-gray-200 shadow-xs space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 font-serif">
-                {t('admin.cropDistribution')}
-              </h3>
+            <div className="lg:col-span-5 bg-white p-5 border border-gray-300 shadow-sm rounded-sm space-y-4">
+              <div className="border-b border-gray-300 pb-2">
+                <h3 className="text-md font-bold text-gray-800 uppercase">
+                  {t('admin.cropDistribution')}
+                </h3>
+              </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {cropDistributionData.map((crop) => (
-                  <div key={crop.name} className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
+                  <div key={crop.name} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-300 rounded-sm">
                     <div className="flex items-center gap-3">
                       <div 
-                        className="w-4 h-4 rounded-full" 
+                        className="w-3 h-3 rounded-sm border border-gray-400" 
                         style={{ backgroundColor: crop.color }} 
                       />
-                      <span className="text-xs font-bold text-gray-900">
+                      <span className="text-xs font-bold text-gray-800 uppercase">
                         {language === 'hi' ? crop.nameHi : crop.name}
                       </span>
                     </div>
-                    <span className="text-sm font-black text-[#14532d]">
+                    <span className="text-sm font-bold text-[#14532d]">
                       {crop.value}%
                     </span>
                   </div>

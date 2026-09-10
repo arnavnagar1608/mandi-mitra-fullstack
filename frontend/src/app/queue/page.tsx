@@ -114,178 +114,165 @@ export default function QueuePage() {
       pageTitle={{ en: 'Live Queue & Token Status', hi: 'लाइव कतार एवं टोकन स्थिति' }}
       pageDescription={{ en: 'your active token sequence and real-time waiting estimate', hi: 'अपना सक्रिय टोकन नंबर और रीयल-टाइम कतार स्थिति' }}
     >
-      <div className="bg-white min-h-screen py-10 sm:py-14">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-6">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14532d]/10 text-[#14532d] text-xs font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>{language === 'hi' ? 'रीयल-टाइम कतार ट्रैकिंग' : 'Real-Time Queue Telemetry'}</span>
+      <div className="bg-gray-100 min-h-screen py-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          
+          {/* Top Header */}
+          <div className="bg-white border border-gray-300 shadow-sm p-4 rounded-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-300 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-2 py-1 bg-[#ea580c]/10 text-[#ea580c] text-xs font-bold border border-[#ea580c]/30 rounded-sm mb-2">
+                  <span className="w-2 h-2 rounded-full bg-[#ea580c]" />
+                  <span>{language === 'hi' ? 'लाइव स्थिति' : 'Live Token Status'}</span>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 uppercase">
+                  {t('queue.title')}
+                </h1>
+              </div>
+
+              <button
+                onClick={handleRefresh}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-200 rounded-sm"
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span>{language === 'hi' ? 'ताज़ा करें' : 'Refresh'}</span>
+              </button>
             </div>
-            <h1 className="text-3xl font-extrabold text-gray-900 font-serif">
-              {t('queue.title')}
-            </h1>
           </div>
 
-        {/* NO ACTIVE BOOKING BANNER */}
-        {hasNoActiveBooking && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#D4912A]/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-6 h-6 text-[#D4912A] shrink-0" />
-              <div>
-                <h3 className="text-base font-bold text-gray-900">
-                  {language === 'hi' ? 'कोई सक्रिय अपॉइंटमेंट नहीं मिला' : 'No Active Appointment Found'}
-                </h3>
-                <p className="text-xs text-gray-600">
-                  {language === 'hi' ? 'लाइव कतार देखने के लिए पहले खरीद केंद्र पर स्लॉट बुक करें।' : 'Please book a slot at a procurement center to view live queue position.'}
-                </p>
+          {/* NO ACTIVE BOOKING BANNER */}
+          {hasNoActiveBooking && (
+            <div className="bg-white p-4 border-l-4 border-l-[#ea580c] border border-gray-300 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 rounded-sm">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-6 h-6 text-[#ea580c] shrink-0" />
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase">
+                    {language === 'hi' ? 'कोई सक्रिय अपॉइंटमेंट नहीं मिला' : 'No Active Appointment Found'}
+                  </h3>
+                  <p className="text-xs text-gray-700 mt-1">
+                    {language === 'hi' ? 'लाइव कतार देखने के लिए पहले खरीद केंद्र पर स्लॉट बुक करें।' : 'Please book a slot at a procurement center to view live queue position.'}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/centers"
+                className="px-4 py-2 bg-[#14532d] hover:bg-[#115e32] text-white text-xs font-bold rounded-sm shrink-0 uppercase"
+              >
+                {language === 'hi' ? 'स्लॉट बुक करें' : 'Book a Slot'}
+              </Link>
+            </div>
+          )}
+
+          {/* CROWD/QUEUE LIVE COUNTERS */}
+          <div className="bg-white border border-gray-300 shadow-sm p-4 rounded-sm">
+            <h2 className="text-sm font-bold text-gray-900 uppercase border-b border-gray-300 pb-2 mb-4 bg-gray-50 px-2 py-1">{language === 'hi' ? 'टोकन स्थिति बोर्ड' : 'Token Status Board'}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 border border-gray-300 rounded-sm overflow-hidden">
+              <div className="p-4 bg-gray-50 border-r border-gray-300 flex flex-col items-center justify-center text-center">
+                <span className="text-xs text-gray-600 uppercase font-bold mb-2">
+                  {t('queue.currentlyServing')}
+                </span>
+                <span className="text-4xl font-bold text-[#ea580c] font-mono">
+                  {currentServingToken}
+                </span>
+              </div>
+
+              <div className="p-4 bg-white border-r border-gray-300 flex flex-col items-center justify-center text-center shadow-inner">
+                <span className="text-xs text-[#14532d] uppercase font-bold mb-2">
+                  {t('queue.yourToken')}
+                </span>
+                <span className="text-5xl font-bold text-[#14532d] font-mono">
+                  {myToken}
+                </span>
+              </div>
+
+              <div className="p-4 bg-gray-50 flex flex-col items-center justify-center text-center">
+                <span className="text-xs text-gray-600 uppercase font-bold mb-2">
+                  {t('queue.yourPosition')}
+                </span>
+                <span className="text-4xl font-bold text-gray-900 font-mono">
+                  {tokensAhead}
+                </span>
+                <span className="text-xs text-gray-500 uppercase mt-1">{language === 'hi' ? 'आगे' : 'Ahead'}</span>
               </div>
             </div>
-            <Link
-              href="/centers"
-              className="px-5 py-2.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white text-xs font-bold shrink-0 transition"
-            >
-              {language === 'hi' ? 'स्लॉट बुक करें' : 'Book a Slot'}
-            </Link>
-          </div>
-        )}
 
-          <button
-            onClick={handleRefresh}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-gray-600 hover:text-gray-900 shadow-xs"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{language === 'hi' ? 'ताज़ा करें' : 'Refresh Live Status'}</span>
-          </button>
-        </div>
-
-        {/* CROWD/QUEUE LIVE COUNTERS */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            
-            <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200">
-              <span className="text-xs text-gray-500 uppercase font-bold tracking-wider block mb-1">
-                {t('queue.currentlyServing')}
-              </span>
-              <span className="text-4xl sm:text-5xl font-black text-[#D4912A] font-mono">
-                #{currentServingToken}
-              </span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-[#14532d]/10 border border-[#14532d]/20">
-              <span className="text-xs text-[#14532d] uppercase font-bold tracking-wider block mb-1">
-                {t('queue.yourToken')}
-              </span>
-              <span className="text-4xl sm:text-5xl font-black text-[#14532d] font-mono">
-                #{myToken}
-              </span>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200">
-              <span className="text-xs text-gray-500 uppercase font-bold tracking-wider block mb-1">
-                {t('queue.yourPosition')}
-              </span>
-              <span className="text-4xl sm:text-5xl font-black text-gray-900 font-mono">
-                {tokensAhead} <span className="text-sm font-sans text-gray-600">ahead</span>
-              </span>
-            </div>
-
-          </div>
-
-          {/* Alert Notification */}
-          <div className="p-4 rounded-2xl bg-[#D4912A]/10 border border-[#D4912A]/30 flex items-center gap-3.5">
-            <Sparkles className="w-5 h-5 text-[#D4912A] shrink-0" />
-            <p className="text-xs sm:text-sm font-semibold text-gray-900">
-              {t('queue.turnApproaching')}
-            </p>
-          </div>
-        </div>
-
-        {/* 8-STAGE VERTICAL STEPPER (LIKE FOOD ORDER TRACKING) */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-6">
-          <h3 className="text-lg font-bold text-gray-900 font-serif border-b border-gray-200 pb-4">
-            {language === 'hi' ? 'खरीद चरण की स्थिति' : 'End-to-End Procurement Progress'}
-          </h3>
-
-          <div className="relative pl-6 sm:pl-8 space-y-8 before:absolute before:left-3 sm:before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
-            {stages.map((stage, idx) => {
-              return (
-                <div key={stage.key} className="relative flex items-start gap-4">
-                  {/* Step Dot */}
-                  <div
-                    className={`absolute -left-6 sm:-left-8 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                      stage.done
-                        ? 'bg-[#14532d] text-white ring-4 ring-[#14532d]/20'
-                        : stage.current
-                        ? 'bg-[#D4912A] text-white ring-4 ring-[#D4912A]/20 animate-pulse'
-                        : 'bg-gray-200 text-gray-400'
-                    }`}
-                  >
-                    {stage.done ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      idx + 1
-                    )}
-                  </div>
-
-                  {/* Step Content */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className={`text-sm sm:text-base font-bold ${
-                        stage.current 
-                          ? 'text-[#D4912A]' 
-                          : stage.done 
-                          ? 'text-gray-900' 
-                          : 'text-gray-400'
-                      }`}>
-                        {stage.label}
-                      </h4>
-                      {stage.current && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D4912A] text-white">
-                          CURRENT
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-600">
-                      {stage.key === 'registered' && (language === 'hi' ? 'पंजीकरण पूर्ण हुआ' : 'Farmer details verified in system')}
-                      {stage.key === 'slotConfirmed' && (language === 'hi' ? 'स्लॉट 8 सितंबर, 11:00 AM निर्धारित' : 'Appointment reserved for Sep 8, 11:00 AM')}
-                      {stage.key === 'arrived' && (language === 'hi' ? 'गेट पर क्यूआर कोड सत्यापित हो गया' : 'QR code validated at center entry gate')}
-                      {stage.key === 'qualityCheck' && (language === 'hi' ? 'नमी व दानों की सरकारी ग्रेडिंग' : 'Moisture & grain purity test (Grade A/B)')}
-                      {stage.key === 'weighing' && (language === 'hi' ? 'इलेक्ट्रॉनिक धर्मकांटा तौल' : 'Certified electronic weighbridge measurement')}
-                      {stage.key === 'accepted' && (language === 'hi' ? 'डिजिटल मंडी पर्ची जारी' : 'Final acceptance and digital receipt creation')}
-                      {stage.key === 'paymentProcessing' && (language === 'hi' ? 'पीएफएमएस (PFMS) प्रणाली में भेजा गया' : 'Sent to PFMS banking gateway')}
-                      {stage.key === 'paymentComplete' && (language === 'hi' ? 'डीबीटी द्वारा खाते में जमा' : 'Direct credit to bank account via DBT')}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* QR & APPOINTMENT CARD DETAILS */}
-        <div className="bg-gray-50 rounded-3xl p-6 border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center sm:text-left">
-            <h4 className="text-base font-bold text-gray-900">
-              {language === 'hi' ? 'केंद्र पर यह डिजिटल टोकन दिखाएं' : 'Present this Token at Verification Desk'}
-            </h4>
-            <p className="text-xs text-gray-600">
-              {center?.name} • {fallbackBooking.slotTime}
-            </p>
-            <div className="pt-2">
-              <span className="text-xs font-mono font-bold bg-white px-3 py-1.5 rounded-lg border border-gray-200 text-gray-900">
-                {activeBookingObj?.qrCode || 'MM-TKN-SLOT-CONFIRMED'}
-              </span>
+            <div className="mt-4 p-3 bg-[#ea580c]/10 border border-[#ea580c]/30 rounded-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-[#ea580c]" />
+              <p className="text-xs font-bold text-gray-800 uppercase">
+                {t('queue.turnApproaching')}
+              </p>
             </div>
           </div>
 
-          <div className="p-4 bg-white rounded-2xl border border-gray-200 shadow-xs">
-            <QrCode className="w-20 h-20 text-gray-900" />
+          {/* 8-STAGE VERTICAL STEPPER */}
+          <div className="bg-white border border-gray-300 shadow-sm rounded-sm p-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase bg-gray-50 px-2 py-1 border-b border-gray-300 mb-4">
+              {language === 'hi' ? 'खरीद चरण की स्थिति' : 'Procurement Status Timeline'}
+            </h3>
+
+            <div className="border border-gray-300 rounded-sm p-0 overflow-x-auto">
+              <table className="w-full text-left text-sm text-gray-600">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 border-b border-r border-gray-300">{language === 'hi' ? 'चरण' : 'Stage'}</th>
+                    <th className="px-4 py-2 border-b border-r border-gray-300">{language === 'hi' ? 'स्थिति' : 'Status'}</th>
+                    <th className="px-4 py-2 border-b border-gray-300">{language === 'hi' ? 'विवरण' : 'Details'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stages.map((stage, idx) => (
+                    <tr key={stage.key} className={`border-b border-gray-300 last:border-0 ${stage.current ? 'bg-[#ea580c]/5' : (stage.done ? 'bg-gray-50' : 'bg-white')}`}>
+                      <td className="px-4 py-2 border-r border-gray-300 font-medium text-gray-900">
+                        {idx + 1}. {stage.label}
+                      </td>
+                      <td className="px-4 py-2 border-r border-gray-300 text-xs font-bold">
+                        {stage.done ? (
+                          <span className="text-[#14532d] flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> {language === 'hi' ? 'पूर्ण' : 'COMPLETED'}</span>
+                        ) : stage.current ? (
+                          <span className="text-[#ea580c] animate-pulse">{language === 'hi' ? 'प्रगति पर' : 'IN PROGRESS'}</span>
+                        ) : (
+                          <span className="text-gray-400">{language === 'hi' ? 'लंबित' : 'PENDING'}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-xs">
+                        {stage.key === 'registered' && (language === 'hi' ? 'पंजीकरण पूर्ण हुआ' : 'Farmer details verified in system')}
+                        {stage.key === 'slotConfirmed' && (language === 'hi' ? 'स्लॉट 8 सितंबर, 11:00 AM निर्धारित' : 'Appointment reserved')}
+                        {stage.key === 'arrived' && (language === 'hi' ? 'गेट पर क्यूआर कोड सत्यापित' : 'QR code validated at center')}
+                        {stage.key === 'qualityCheck' && (language === 'hi' ? 'नमी व दानों की ग्रेडिंग' : 'Moisture & grain purity test')}
+                        {stage.key === 'weighing' && (language === 'hi' ? 'इलेक्ट्रॉनिक धर्मकांटा तौल' : 'Electronic weighbridge measurement')}
+                        {stage.key === 'accepted' && (language === 'hi' ? 'डिजिटल मंडी पर्ची जारी' : 'Final acceptance')}
+                        {stage.key === 'paymentProcessing' && (language === 'hi' ? 'पीएफएमएस प्रणाली में भेजा गया' : 'Sent to PFMS banking gateway')}
+                        {stage.key === 'paymentComplete' && (language === 'hi' ? 'खाते में जमा' : 'Direct credit to bank via DBT')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* QR & APPOINTMENT CARD DETAILS */}
+          <div className="bg-white border border-gray-300 shadow-sm rounded-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center sm:text-left">
+              <h4 className="text-sm font-bold text-gray-900 uppercase">
+                {language === 'hi' ? 'टोकन विवरण' : 'Token Verification Details'}
+              </h4>
+              <div className="text-xs text-gray-700 bg-gray-100 p-2 border border-gray-300 rounded-sm inline-block">
+                <span className="font-bold">{language === 'hi' ? 'केंद्र:' : 'Center:'}</span> {center?.name} <br/>
+                <span className="font-bold">{language === 'hi' ? 'स्लॉट:' : 'Slot:'}</span> {fallbackBooking.slotTime}
+              </div>
+              <div className="pt-2">
+                <span className="text-sm font-mono font-bold bg-white px-3 py-1 border-2 border-gray-800 text-gray-900 inline-block uppercase">
+                  {activeBookingObj?.qrCode || 'MM-TKN-SLOT-CONFIRMED'}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-2 bg-white border-2 border-gray-800 rounded-sm">
+              <QrCode className="w-24 h-24 text-gray-900" />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </AuthGuard>
   );
