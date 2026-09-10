@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #5B7F3B;
+  --color-primary-light: #7BA55A;
+  --color-primary-dark: #466B2A;
+  --color-accent: #D4912A;
+  --color-accent-light: #E8A94D;
+  --color-accent-dark: #B87A1F;
+  --color-cream: #FDF8F0;
+  --color-cream-dark: #F5EDE0;
+  --color-card: #FFFDF9;
+  --color-charcoal: #3D3426;
+  --color-charcoal-light: #6B5D4A;
+  --color-terracotta: #C75B3A;
+  --color-sage: #6B9F5B;
+  --color-border: #E8DFD0;
+  --color-border-light: #F0EAE0;
+  --color-warm-shadow: rgba(93, 72, 41, 0.08);
+  --color-warm-shadow-lg: rgba(93, 72, 41, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FDF8F0;
+  color: #3D3426;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Warm grain texture overlay for sections */
+.grain-texture {
+  position: relative;
+}
+
+.grain-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Warm scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5EDE0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4B69C;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A89878;
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(93, 72, 41, 0.12);
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float-delayed {
+  animation: float-delayed 4s ease-in-out 1s infinite;
+}
+
+/* Pulse glow for status indicators */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 159, 91, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(107, 159, 91, 0); }
+}
+
+.pulse-glow-green {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Counter animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-count-up {
+  animation: count-up 0.6s ease-out forwards;
+}
+
+/* Stagger children animation helper */
+.stagger-children > * {
+  opacity: 0;
+  animation: count-up 0.5s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }

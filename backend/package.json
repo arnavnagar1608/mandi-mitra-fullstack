@@ -1,0 +1,23 @@
+{
+  "name": "mandi-mitra-backend",
+  "version": "1.0.0",
+  "description": "Production REST API Backend for Mandi Mitra (मंडी मित्र) Agricultural Procurement System",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "node tests/integration.test.js"
+  },
+  "keywords": ["mandi-mitra", "sih-2026", "express", "firebase", "firestore", "agriculture"],
+  "author": "Mandi Mitra Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.1.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}
