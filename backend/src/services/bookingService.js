@@ -1,5 +1,5 @@
 const { db } = require('../config/firebase');
-const admin = require('firebase-admin');
+const admin = { firestore: { FieldValue: { serverTimestamp: () => new Date() } } };
 const { generateQrPayload } = require('../utils/qr');
 
 /**
