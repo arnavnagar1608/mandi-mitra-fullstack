@@ -1,22 +1,21 @@
-const { db } = require('../config/firebase');
-const admin = require('firebase-admin');
+const { supabase } = require('../config/supabase');
 
 /**
  * Retrieves the authenticated farmer's profile.
  */
 async function getFarmerProfile(uid) {
-  const doc = await db.collection('farmers').doc(uid).get();
-  if (!doc.exists) {
-    const error = new Error('Farmer profile not found. Please complete registration.');
-    error.statusCode = 404;
-    error.code = 'FARMER_NOT_FOUND';
-    throw error;
+  const { data: farmer, error } = await supabase.from('farmers').select('*').eq('id', uid).single();
+  if (error || !farmer) {
+    const err = new Error('Farmer profile not found. Please complete registration.');
+    err.statusCode = 404;
+    err.code = 'FARMER_NOT_FOUND';
+    throw err;
   }
-  return { id: doc.id, ...doc.data() };
+  return farmer;
 }
 
 /**
- * Registers a new farmer using transaction-safe uniqueness locks.
+ * Registers a new farmer.
  */
 async function registerFarmer(uid, data) {
   const { name, phone, village, district, state = 'Madhya Pradesh', aadhaarLast4, languagePref = 'hi' } = data;
@@ -32,84 +31,64 @@ async function registerFarmer(uid, data) {
   const statePrefix = (state.toLowerCase().includes('punjab') ? 'PB' : 'MP');
   const generatedFarmerId = `${statePrefix}-KISAN-${cleanLast4}`;
 
-  const phoneLockRef = db.collection('unique_phones').doc(phone);
-  const farmerIdLockRef = db.collection('unique_farmer_ids').doc(generatedFarmerId);
-  const farmerRef = db.collection('farmers').doc(uid);
+  // Check if farmer already exists by ID
+  const { data: existingFarmer } = await supabase.from('farmers').select('*').eq('id', uid).single();
+  if (existingFarmer) {
+    return existingFarmer;
+  }
 
-  return await db.runTransaction(async (transaction) => {
-    // 1. Check uniqueness lock documents
-    const phoneSnap = await transaction.get(phoneLockRef);
-    if (phoneSnap.exists && phoneSnap.data().uid !== uid) {
-      const error = new Error(`Phone number ${phone} is already linked to another farmer account.`);
-      error.statusCode = 409;
-      error.code = 'PHONE_ALREADY_EXISTS';
-      throw error;
-    }
+  // Check if phone exists
+  const { data: phoneCheck } = await supabase.from('farmers').select('id').eq('phone', phone).single();
+  if (phoneCheck && phoneCheck.id !== uid) {
+    const error = new Error(`Phone number ${phone} is already linked to another farmer account.`);
+    error.statusCode = 409;
+    error.code = 'PHONE_ALREADY_EXISTS';
+    throw error;
+  }
 
-    const farmerIdSnap = await transaction.get(farmerIdLockRef);
-    if (farmerIdSnap.exists && farmerIdSnap.data().uid !== uid) {
-      const error = new Error(`Kisan Farmer ID ${generatedFarmerId} is already registered.`);
-      error.statusCode = 409;
-      error.code = 'FARMER_ID_ALREADY_EXISTS';
-      throw error;
-    }
+  const profile = {
+    id: uid,
+    name,
+    name_hi: data.nameHi || name,
+    phone,
+    village: village || 'Gram Panchayat',
+    village_hi: data.villageHi || village || 'ग्राम पंचायत',
+    district: district || 'Bhopal',
+    district_hi: data.districtHi || district || 'भोपाल',
+    state,
+    state_hi: data.stateHi || (state === 'Punjab' ? 'पंजाब' : 'मध्य प्रदेश'),
+    aadhaar_last4: cleanLast4,
+    farmer_id: generatedFarmerId,
+    bank_name: data.bankName || 'State Bank of India',
+    account_last4: data.accountLast4 || '7890',
+    photo: data.photo || '/images/farmers/farmer1.jpg',
+    language_pref: languagePref,
+  };
 
-    const farmerSnap = await transaction.get(farmerRef);
-    if (farmerSnap.exists) {
-      return { id: farmerSnap.id, ...farmerSnap.data() };
-    }
+  const { data: insertedFarmer, error: insertError } = await supabase.from('farmers').insert([profile]).select().single();
+  
+  if (insertError) {
+    const error = new Error(`Failed to register farmer: ${insertError.message}`);
+    error.statusCode = 500;
+    throw error;
+  }
 
-    const now = admin.firestore.FieldValue.serverTimestamp();
+  // Create welcome notification
+  await supabase.from('notifications').insert([{
+    farmer_id: uid,
+    title: 'Welcome to Mandi Mitra',
+    title_hi: 'मंडी मित्र में आपका स्वागत है',
+    message: 'Your farmer registration has been verified. You can now book procurement slots and track queues live.',
+    message_hi: 'आपका किसान पंजीकरण सत्यापित हो गया है। अब आप खरीद स्लॉट बुक कर सकते हैं व लाइव कतार ट्रैक कर सकते हैं।',
+    type: 'success',
+    read: false
+  }]);
 
-    // 2. Set uniqueness locks
-    transaction.set(phoneLockRef, { uid, phone, createdAt: now });
-    transaction.set(farmerIdLockRef, { uid, farmerId: generatedFarmerId, createdAt: now });
-
-    // 3. Create farmer profile
-    const profile = {
-      id: uid,
-      name,
-      nameHi: data.nameHi || name,
-      phone,
-      village: village || 'Gram Panchayat',
-      villageHi: data.villageHi || village || 'ग्राम पंचायत',
-      district: district || 'Bhopal',
-      districtHi: data.districtHi || district || 'भोपाल',
-      state,
-      stateHi: data.stateHi || (state === 'Punjab' ? 'पंजाब' : 'मध्य प्रदेश'),
-      aadhaarLast4: cleanLast4,
-      farmerId: generatedFarmerId,
-      bankName: data.bankName || 'State Bank of India',
-      accountLast4: data.accountLast4 || '7890',
-      photo: data.photo || '/images/farmers/farmer1.jpg',
-      languagePref,
-      registeredAt: now,
-      updatedAt: now
-    };
-
-    transaction.set(farmerRef, profile);
-
-    // 4. Create welcome notification
-    const notifRef = farmerRef.collection('notifications').doc('welcome');
-    transaction.set(notifRef, {
-      id: 'welcome',
-      farmerId: uid,
-      title: 'Welcome to Mandi Mitra',
-      titleHi: 'मंडी मित्र में आपका स्वागत है',
-      message: 'Your farmer registration has been verified. You can now book procurement slots and track queues live.',
-      messageHi: 'आपका किसान पंजीकरण सत्यापित हो गया है। अब आप खरीद स्लॉट बुक कर सकते हैं व लाइव कतार ट्रैक कर सकते हैं।',
-      type: 'success',
-      read: false,
-      createdAt: now
-    });
-
-    return profile;
-  });
+  return insertedFarmer;
 }
 
 /**
  * Updates editable farmer profile details.
- * Prevents modifying immutable identifiers (id, aadhaarLast4, farmerId).
  */
 async function updateFarmerProfile(uid, data) {
   const immutableKeys = ['id', 'aadhaarLast4', 'farmerId', 'registeredAt'];
@@ -122,59 +101,61 @@ async function updateFarmerProfile(uid, data) {
     }
   }
 
-  const farmerRef = db.collection('farmers').doc(uid);
-  const snap = await farmerRef.get();
-  if (!snap.exists) {
-    const error = new Error('Farmer profile not found.');
-    error.statusCode = 404;
-    error.code = 'FARMER_NOT_FOUND';
-    throw error;
-  }
-
   const allowedUpdates = {};
-  const allowedFields = ['name', 'nameHi', 'village', 'villageHi', 'district', 'districtHi', 'bankName', 'accountLast4', 'languagePref', 'photo'];
+  const allowedFieldsMap = {
+    name: 'name', nameHi: 'name_hi', village: 'village', villageHi: 'village_hi',
+    district: 'district', districtHi: 'district_hi', bankName: 'bank_name',
+    accountLast4: 'account_last4', languagePref: 'language_pref', photo: 'photo'
+  };
   
-  allowedFields.forEach(f => {
-    if (data[f] !== undefined) allowedUpdates[f] = data[f];
+  Object.keys(allowedFieldsMap).forEach(f => {
+    if (data[f] !== undefined) allowedUpdates[allowedFieldsMap[f]] = data[f];
   });
 
-  allowedUpdates.updatedAt = admin.firestore.FieldValue.serverTimestamp();
+  const { data: updatedDoc, error } = await supabase.from('farmers').update(allowedUpdates).eq('id', uid).select().single();
+  
+  if (error || !updatedDoc) {
+    const err = new Error('Farmer profile not found or update failed.');
+    err.statusCode = 404;
+    err.code = 'UPDATE_FAILED';
+    throw err;
+  }
 
-  await farmerRef.update(allowedUpdates);
-
-  const updatedDoc = await farmerRef.get();
-  return { id: updatedDoc.id, ...updatedDoc.data() };
+  return updatedDoc;
 }
 
 /**
  * Lists notifications for the authenticated farmer.
  */
 async function getFarmerNotifications(uid) {
-  const snap = await db.collection('farmers').doc(uid).collection('notifications')
-    .orderBy('createdAt', 'desc')
-    .limit(20)
-    .get();
+  const { data, error } = await supabase.from('notifications')
+    .select('*')
+    .eq('farmer_id', uid)
+    .order('created_at', { ascending: false })
+    .limit(20);
 
-  return snap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  if (error) return [];
+  return data;
 }
 
 /**
  * Marks a notification as read.
  */
 async function markNotificationRead(uid, notifId) {
-  const ref = db.collection('farmers').doc(uid).collection('notifications').doc(notifId);
-  const snap = await ref.get();
-  if (!snap.exists) {
-    const error = new Error('Notification not found.');
-    error.statusCode = 404;
-    error.code = 'NOTIFICATION_NOT_FOUND';
-    throw error;
+  const { data, error } = await supabase.from('notifications')
+    .update({ read: true })
+    .eq('id', notifId)
+    .eq('farmer_id', uid)
+    .select()
+    .single();
+
+  if (error || !data) {
+    const err = new Error('Notification not found.');
+    err.statusCode = 404;
+    err.code = 'NOTIFICATION_NOT_FOUND';
+    throw err;
   }
 
-  await ref.update({ read: true });
   return { id: notifId, read: true };
 }
 

@@ -2,400 +2,471 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useLanguage } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
-import { crops as fallbackCrops } from '@/lib/mock-data';
 import { apiClient } from '@/lib/api-client';
+import { NoticeTicker } from '@/components/home/NoticeTicker';
 import { 
-  CalendarCheck, 
-  MapPin, 
-  Clock, 
-  CheckCircle2, 
-  ShieldCheck, 
-  ArrowRight, 
-  AlertCircle, 
-  Sparkles, 
-  Users, 
-  Building2, 
-  IndianRupee, 
-  ChevronRight, 
-  LogIn
+  ArrowRight,
+  Calendar,
+  Check,
+  ChevronDown,
+  Download,
+  Search,
+  Users,
+  Truck,
+  Database
 } from 'lucide-react';
 
-import { NoticeTicker } from '@/components/home/NoticeTicker';
-import { CitizenServices } from '@/components/home/CitizenServices';
+import { Booking } from '@/lib/mock-data';
 
 export default function HomePage() {
   const { t, language } = useLanguage();
   const { isAuthenticated, user } = useAuth();
+  
+  const [appId, setAppId] = useState('');
 
-  const [cropsList, setCropsList] = useState<any[]>(fallbackCrops);
+  const handleTrackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (appId) {
+      window.location.href = `/queue?id=${appId}`;
+    }
+  };
+
+  const [farmerBookings, setFarmerBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     async function loadData() {
-      const cropsRes = await apiClient<{ crops: any[] }>('/crops');
-      if (cropsRes.success && cropsRes.data?.crops?.length) {
-        setCropsList(cropsRes.data.crops);
+      if (isAuthenticated) {
+        const bookRes = await apiClient<{ bookings: Booking[] }>('/bookings/my');
+        if (bookRes.success && bookRes.data?.bookings?.length) {
+          setFarmerBookings(bookRes.data.bookings);
+        }
       }
     }
     loadData();
-  }, []);
+  }, [isAuthenticated]);
+
+  const isRegistered = isAuthenticated && !!user;
+  const hasLandDetails = isRegistered && !!user?.village;
+  const activeBooking = farmerBookings.find(
+    b => b.status === 'confirmed' || b.status === 'arrived' || b.status === 'in-progress'
+  );
+  const hasCenter = isRegistered && !!activeBooking?.centerId;
+  const hasSlot = isRegistered && !!activeBooking?.slotId;
+
+  // Calculate dynamic stepper state
+  const steps = [
+    { num: 1, label: 'Farmer Registration', sub: 'step_1.sub', active: !isRegistered, done: isRegistered, href: !isRegistered ? '/login' : undefined },
+    { num: 2, label: 'Land & Crop Details', sub: 'step_2.sub', active: isRegistered && !hasLandDetails, done: hasLandDetails, href: isRegistered && !hasLandDetails ? '/dashboard' : undefined },
+    { num: 3, label: 'Select Procurement Centre', sub: 'step_3.sub', active: hasLandDetails && !hasCenter, done: hasCenter, href: hasLandDetails && !hasCenter ? '/centers' : undefined },
+    { num: 4, label: 'Book Procurement Slot', sub: 'step_4.sub', active: hasCenter && !hasSlot, done: hasSlot, href: hasCenter && !hasSlot ? '/centers' : undefined },
+    { num: 5, label: 'Bring Produce', sub: 'step_5.sub', active: hasSlot, done: false },
+    { num: 6, label: 'Quality Verification', sub: 'step_6.sub', active: false, done: false },
+    { num: 7, label: 'Weighing & Procurement', sub: 'step_7.sub', active: false, done: false },
+    { num: 8, label: 'Payment', sub: 'step_8.sub', active: false, done: false },
+  ];
+
+  // Determine progress bar width
+  const progressSteps = steps.filter(s => s.done).length;
+  const progressWidth = progressSteps === 0 ? '0%' : `${(progressSteps / (steps.length - 1)) * 100}%`;
 
   return (
-    <div className="flex flex-col min-h-screen bg-white" id="main-content">
+    <div className="flex flex-col min-h-screen bg-[#f8f9fa]" id="main-content">
       
-      {/* Government Announcement & Status Marquee */}
       <NoticeTicker />
 
-      {/* 1. HERO SECTION (White Background, Zero Flashing Photo, Clean Government Layout) */}
-      <section className="relative overflow-hidden pt-10 pb-16 lg:pt-16 lg:pb-20 border-b border-gray-200 bg-white">
+      {/* 1. HERO SECTION */}
+      <section className="relative overflow-hidden bg-[#165a31] text-white">
+        {/* Subtle dot pattern overlay */}
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
         
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 lg:py-24 flex flex-col md:flex-row items-center justify-between gap-12">
           
-          {/* Government Portal Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#14532d]/10 border border-[#14532d]/25 text-[#14532d] text-xs sm:text-sm font-semibold tracking-wide">
-            <Sparkles className="w-4 h-4 text-[#f97316]" />
-            <span>{language === 'hi' ? 'राष्ट्रीय कृषि ई-उपार्जन पोर्टल 2026' : 'National Agricultural E-Procurement Portal • MSP 2026'}</span>
-          </div>
+          <div className="flex-1 space-y-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+              Transparent and Efficient<br/>
+              <span className="text-[#f97316]">Foodgrain Procurement</span>
+            </h1>
+            
+            <p className="text-lg text-green-50 max-w-2xl font-light leading-relaxed">
+              Empowering farmers with a seamless digital platform for crop registration, slot booking, and assured Direct Benefit Transfers (DBT) directly into Aadhaar-linked accounts.
+            </p>
 
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
-            {language === 'hi' ? (
-              <>
-                फसल बेचना अब <span className="text-[#14532d] underline decoration-[#f97316] decoration-wavy decoration-2">आसान और तनावमुक्त</span>
-              </>
-            ) : (
-              <>
-                Sell Your Crops with <span className="text-[#14532d] underline decoration-[#f97316] decoration-wavy decoration-2">Dignity, Clarity</span> & Zero Long Queues
-              </>
-            )}
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-normal">
-            {t('landing.hero.subtitle')}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            {isAuthenticated && user ? (
-              <Link
-                href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold text-base shadow-md hover:shadow-lg transition duration-200"
-              >
-                <span>{language === 'hi' ? `नमस्ते ${user.name}, डैशबोर्ड खोलें` : `Welcome ${user.name}, Open Dashboard`}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            ) : (
+            <div className="pt-4 flex flex-wrap items-center gap-4">
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold text-base shadow-md hover:shadow-lg transition duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#f97316] hover:bg-[#ea580c] text-white font-semibold rounded-sm transition"
               >
-                <LogIn className="w-5 h-5 text-amber-300" />
-                <span>{language === 'hi' ? 'किसान लॉगिन / पंजीकरण करें' : 'Farmer Sign In / Register'}</span>
+                <span>Register for Procurement</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-            )}
 
-            <Link
-              href="/centers"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 font-semibold text-base shadow-xs hover:border-gray-400 transition"
-            >
-              <MapPin className="w-5 h-5 text-[#f97316]" />
-              <span>{language === 'hi' ? 'खरीद केंद्र व दरें देखें' : 'View Mandis & MSP Rates'}</span>
-            </Link>
+              <Link
+                href="/payments"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white hover:bg-white/10 text-white font-semibold rounded-sm transition"
+              >
+                <span>Track Payment Status</span>
+              </Link>
+            </div>
           </div>
 
-          {/* Trust Indicators */}
-          <div className="pt-6 grid grid-cols-3 gap-6 border-t border-gray-200 max-w-lg mx-auto text-center">
-            <div>
-              <div className="text-xl sm:text-2xl font-black text-gray-900">100%</div>
-              <div className="text-xs text-gray-600 font-medium">{language === 'hi' ? 'पारदर्शी एमएसपी' : 'Official MSP Rates'}</div>
+          <div className="w-full md:w-[380px] shrink-0">
+            <div className="bg-[#246b41] rounded-lg p-6 border border-[#2e7c4f] shadow-lg">
+              <div className="flex items-center gap-2 mb-6">
+                <Calendar className="w-5 h-5 text-[#f97316]" />
+                <h3 className="text-lg font-semibold text-[#f97316]">Procurement Calendar</h3>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-sm">Kharif Registration</span>
+                  <span className="px-2 py-0.5 bg-[#22c55e] text-white text-[11px] font-bold rounded-sm">Active</span>
+                </div>
+                <div className="h-px bg-[#2e7c4f] w-full" />
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-sm">Slot Booking</span>
+                  <span className="px-2 py-0.5 bg-[#22c55e] text-white text-[11px] font-bold rounded-sm">Active</span>
+                </div>
+                <div className="h-px bg-[#2e7c4f] w-full" />
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-sm">Rabi Procurement</span>
+                  <span className="px-2 py-0.5 bg-gray-500 text-white text-[11px] font-bold rounded-sm">Closed</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-xl sm:text-2xl font-black text-[#14532d]">~20 min</div>
-              <div className="text-xs text-gray-600 font-medium">{language === 'hi' ? 'औसत प्रतीक्षा समय' : 'Avg. Token Wait'}</div>
+          </div>
+          
+        </div>
+      </section>
+
+      {/* 2. STEPPER SECTION */}
+      <section className="bg-white py-12 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          
+          <div className="flex items-center justify-center mb-10">
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl font-bold text-[#14532d]">stepper_title</h2>
+              <p className="text-gray-500 text-sm mt-1">stepper_desc</p>
+              <div className="w-12 h-1 bg-[#f97316] mt-2"></div>
             </div>
-            <div>
-              <div className="text-xl sm:text-2xl font-black text-[#ea580c]">SMS/Voice</div>
-              <div className="text-xs text-gray-600 font-medium">{language === 'hi' ? 'बिना इंटरनेट के भी' : 'Works without Data'}</div>
-            </div>
+          </div>
+
+          {/* Stepper Visualization */}
+          <div className="hidden md:flex items-start justify-between relative max-w-5xl mx-auto mb-12">
+            <div className="absolute top-5 left-0 w-full h-0.5 bg-gray-200 z-0"></div>
+            <div className="absolute top-5 left-0 h-0.5 bg-[#22c55e] z-0 transition-all duration-500" style={{ width: progressWidth }}></div>
+            
+            {steps.map((step, idx) => {
+              if (step.href) {
+                return (
+                  <Link key={idx} href={step.href} className="relative z-10 flex flex-col items-center w-24 cursor-pointer hover:scale-105 transition-transform">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 mb-2 bg-white transition-colors duration-300 ${
+                      step.done ? 'border-[#22c55e] text-[#22c55e]' : 
+                      step.active ? 'border-[#22c55e] text-[#22c55e] ring-4 ring-[#22c55e]/20' : 
+                      'border-gray-300 text-gray-400'
+                    }`}>
+                      {step.done ? <Check className="w-5 h-5" /> : (step.active && step.num === 4 ? <Calendar className="w-5 h-5" /> : <span className="text-sm font-medium">{step.num}</span>)}
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-[10px] font-bold uppercase mb-0.5 transition-colors duration-300 ${step.active || step.done ? 'text-gray-500' : 'text-gray-400'}`}>STEP {step.num}</div>
+                      <div className={`text-xs font-semibold leading-tight transition-colors duration-300 ${step.active || step.done ? 'text-gray-800' : 'text-gray-400'}`}>{step.label}</div>
+                      <div className="text-[9px] text-gray-400 mt-0.5">{step.sub}</div>
+                    </div>
+                  </Link>
+                );
+              }
+              return (
+                <div key={idx} className="relative z-10 flex flex-col items-center w-24">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 mb-2 bg-white transition-colors duration-300 ${
+                    step.done ? 'border-[#22c55e] text-[#22c55e]' : 
+                    step.active ? 'border-[#22c55e] text-[#22c55e] ring-4 ring-[#22c55e]/20' : 
+                    'border-gray-300 text-gray-400'
+                  }`}>
+                    {step.done ? <Check className="w-5 h-5" /> : (step.active && step.num === 4 ? <Calendar className="w-5 h-5" /> : <span className="text-sm font-medium">{step.num}</span>)}
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-[10px] font-bold uppercase mb-0.5 transition-colors duration-300 ${step.active || step.done ? 'text-gray-500' : 'text-gray-400'}`}>STEP {step.num}</div>
+                    <div className={`text-xs font-semibold leading-tight transition-colors duration-300 ${step.active || step.done ? 'text-gray-800' : 'text-gray-400'}`}>{step.label}</div>
+                    <div className="text-[9px] text-gray-400 mt-0.5">{step.sub}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/login"
+              className="px-6 py-2.5 bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-sm rounded-sm uppercase tracking-wide transition"
+            >
+              START_REG_BTN
+            </Link>
+            <Link
+              href="/queue"
+              className="px-6 py-2.5 border-2 border-[#14532d] text-[#14532d] hover:bg-gray-50 font-bold text-sm rounded-sm uppercase tracking-wide transition"
+            >
+              TRACK_PROC_BTN
+            </Link>
           </div>
 
         </div>
       </section>
 
-      {/* 2. CITIZEN SERVICES QUICK GRID (e-Uparjan Service Navigation) */}
-      <CitizenServices />
-
-      {/* 3. REAL-TIME STATS STRIP */}
-      <section className="bg-[#14532d] text-white py-8 border-y border-[#0f3d21] shadow-xs">
+      {/* 3. SCHEMES & TRACK STATUS */}
+      <section className="py-12 bg-[#f8f9fa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="flex flex-col lg:flex-row gap-8">
             
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-white">
-                <Users className="w-6 h-6 text-[#f97316]" />
-                <span>12,450+</span>
+            {/* Left: Important Schemes */}
+            <div className="flex-1 space-y-6">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-6 bg-[#f97316]"></div>
+                <h2 className="text-xl font-bold text-[#14532d]">Important Schemes</h2>
               </div>
-              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.farmersServed')}</p>
+
+              <div className="space-y-4">
+                {/* Scheme 1 */}
+                <div className="bg-white border-l-4 border-l-[#22c55e] border border-gray-200 p-5 rounded-sm shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-bold text-[#14532d]">Kharif Procurement Scheme 2026-27</h3>
+                        <span className="px-2 py-0.5 bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20 text-[10px] font-bold rounded-sm uppercase">Active</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Procurement of Paddy, Jowar, Bajra at Minimum Support Price (MSP).</p>
+                      <div className="text-xs bg-gray-50 inline-block px-3 py-1.5 rounded-sm border border-gray-100">
+                        <span className="font-semibold">Eligibility:</span> Farmers with registered land records in MP
+                      </div>
+                    </div>
+                    <Link href="/centers" className="px-4 py-2 border border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e]/5 rounded-sm text-sm font-semibold transition whitespace-nowrap">
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Scheme 2 */}
+                <div className="bg-white border-l-4 border-l-gray-400 border border-gray-200 p-5 rounded-sm shadow-sm opacity-80">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-bold text-[#14532d]">Rabi Procurement Scheme 2025-26</h3>
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 border border-gray-200 text-[10px] font-bold rounded-sm uppercase">Closed</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Procurement of Wheat, Gram, Lentils, and Mustard at MSP.</p>
+                      <div className="text-xs bg-gray-50 inline-block px-3 py-1.5 rounded-sm border border-gray-100">
+                        <span className="font-semibold">Eligibility:</span> Farmers with updated Girdawari records
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 border border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e]/5 rounded-sm text-sm font-semibold transition whitespace-nowrap">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+
+                {/* Scheme 3 */}
+                <div className="bg-white border-l-4 border-l-[#22c55e] border border-gray-200 p-5 rounded-sm shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-bold text-[#14532d]">Bhavantar Bhugtan Yojana</h3>
+                        <span className="px-2 py-0.5 bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20 text-[10px] font-bold rounded-sm uppercase">Active</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Price deficiency payment scheme for selected commercial crops.</p>
+                      <div className="text-xs bg-gray-50 inline-block px-3 py-1.5 rounded-sm border border-gray-100">
+                        <span className="font-semibold">Eligibility:</span> Registered farmers selling in approved Mandis
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 border border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e]/5 rounded-sm text-sm font-semibold transition whitespace-nowrap">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-white">
-                <Building2 className="w-6 h-6 text-[#f97316]" />
-                <span>89</span>
+            {/* Right: Track Status */}
+            <div className="w-full lg:w-[350px] shrink-0">
+              <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
+                <div className="bg-[#14532d] text-white px-4 py-3 flex items-center gap-2">
+                  <Search className="w-5 h-5" />
+                  <h3 className="font-bold">Track Status</h3>
+                </div>
+                <div className="p-5">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Enter your Registration/Application Number to track procurement or payment status.
+                  </p>
+                  <form onSubmit={handleTrackSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Application ID / Mobile No.
+                      </label>
+                      <input 
+                        type="text" 
+                        value={appId}
+                        onChange={(e) => setAppId(e.target.value)}
+                        placeholder="e.g. MP123456789"
+                        className="w-full border border-gray-300 px-3 py-2 text-sm rounded-sm focus:outline-none focus:border-[#14532d]"
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white font-bold py-2.5 rounded-sm transition text-sm"
+                    >
+                      Track Status
+                    </button>
+                  </form>
+                </div>
               </div>
-              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.centersActive')}</p>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-white">
-                <IndianRupee className="w-6 h-6 text-[#f97316]" />
-                <span>₹28.4 Cr</span>
-              </div>
-              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.croresDisbursed')}</p>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-white">
-                <Clock className="w-6 h-6 text-[#f97316]" />
-                <span>78%</span>
-              </div>
-              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.avgWaitReduced')}</p>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* 4. THE 3 CORE PROBLEMS → TRANSFORMED */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
-          
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-bold tracking-widest text-[#14532d] uppercase bg-[#14532d]/10 px-3.5 py-1.5 rounded-full border border-[#14532d]/20">
-              {language === 'hi' ? 'समस्या का समाधान' : 'The Problem vs Our Solution'}
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-              {t('landing.problem.title')}
-            </h2>
-            <p className="text-base text-gray-600">
-              {language === 'hi' 
-                ? 'पारंपरिक मंडियों में किसान कई अनिश्चितताओं से जूझते हैं। मंडी मित्र इन तीनों गंभीर बाधाओं को डिजिटल रूप से समाप्त करता है:' 
-                : 'Farmers traditionally faced opaque schedules and painful queues. Here is how Mandi Mitra directly tackles all three core pain points:'}
-            </p>
+      {/* 4. NOTIFICATIONS */}
+      <section className="py-12 bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-6 bg-[#f97316]"></div>
+              <h2 className="text-xl font-bold text-[#14532d]">Latest Notifications & Circulars</h2>
+            </div>
+            <button className="text-sm font-semibold text-[#14532d] hover:underline">
+              View All
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Problem 1 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-700 flex items-center justify-center border border-rose-100">
-                  <Clock className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">{t('landing.problem.waiting')}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{t('landing.problem.waitingDesc')}</p>
-              </div>
-              <div className="mt-6 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 p-6 rounded-b-2xl">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#14532d]">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{language === 'hi' ? 'समाधान: 90-मिनट टाइम-स्लॉट बुकिंग' : 'Solution: 90-Minute Slot Appointments'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Problem 2 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-100">
-                  <AlertCircle className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">{t('landing.problem.info')}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{t('landing.problem.infoDesc')}</p>
-              </div>
-              <div className="mt-6 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 p-6 rounded-b-2xl">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#14532d]">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{language === 'hi' ? 'समाधान: लाइव खरीद कैलेंडर व एसएमएस' : 'Solution: Live Schedule Calendar & SMS'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Problem 3 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#14532d] flex items-center justify-center border border-emerald-100">
-                  <ShieldCheck className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">{t('landing.problem.status')}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{t('landing.problem.statusDesc')}</p>
-              </div>
-              <div className="mt-6 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 p-6 rounded-b-2xl">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#14532d]">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{language === 'hi' ? 'समाधान: 8-चरणीय लाइव स्टेटस ट्रैकर' : 'Solution: 8-Stage Live Order-Style Tracking'}</span>
-                </div>
-              </div>
-            </div>
-
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm border-collapse border border-gray-200">
+              <thead>
+                <tr className="bg-[#f0fdf4] border-b border-gray-200">
+                  <th className="px-4 py-3 font-bold text-[#14532d] w-16">SR.NO</th>
+                  <th className="px-4 py-3 font-bold text-[#14532d]">TITLE / SUBJECT</th>
+                  <th className="px-4 py-3 font-bold text-[#14532d]">DEPARTMENT</th>
+                  <th className="px-4 py-3 font-bold text-[#14532d]">DATE</th>
+                  <th className="px-4 py-3 font-bold text-[#14532d] text-center w-24">DOWNLOAD</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                <tr className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-3 font-medium text-gray-900">1</td>
+                  <td className="px-4 py-3 text-gray-700 flex items-center gap-2">
+                    <span className="w-4 h-4 text-green-600">📄</span> Guidelines for Kharif Procurement 2026-27
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">Food & Civil Supplies</td>
+                  <td className="px-4 py-3 text-gray-600">05-Sep-2026</td>
+                  <td className="px-4 py-3 text-center text-red-500 hover:text-red-700 cursor-pointer">
+                    <Download className="w-4 h-4 mx-auto" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-3 font-medium text-gray-900">2</td>
+                  <td className="px-4 py-3 text-gray-700 flex items-center gap-2">
+                    <span className="w-4 h-4 text-green-600">📄</span> Revised FAQ for Slot Booking via Mobile App
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">NIC MP</td>
+                  <td className="px-4 py-3 text-gray-600">01-Sep-2026</td>
+                  <td className="px-4 py-3 text-center text-red-500 hover:text-red-700 cursor-pointer">
+                    <Download className="w-4 h-4 mx-auto" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-3 font-medium text-gray-900">3</td>
+                  <td className="px-4 py-3 text-gray-700 flex items-center gap-2">
+                    <span className="w-4 h-4 text-green-600">📄</span> Order: Mandatory Aadhaar Linking for DBT
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">Finance Dept</td>
+                  <td className="px-4 py-3 text-gray-600">28-Aug-2026</td>
+                  <td className="px-4 py-3 text-center text-red-500 hover:text-red-700 cursor-pointer">
+                    <Download className="w-4 h-4 mx-auto" />
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-3 font-medium text-gray-900">4</td>
+                  <td className="px-4 py-3 text-gray-700 flex items-center gap-2">
+                    <span className="w-4 h-4 text-green-600">📄</span> List of Active Procurement Centers - Bhopal
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">District Admin</td>
+                  <td className="px-4 py-3 text-gray-600">25-Aug-2026</td>
+                  <td className="px-4 py-3 text-center text-red-500 hover:text-red-700 cursor-pointer">
+                    <Download className="w-4 h-4 mx-auto" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-
         </div>
       </section>
 
-      {/* 4. HOW IT WORKS (4 SIMPLE STEPS) */}
-      <section className="py-20 bg-white border-y border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      {/* 5. STATISTICS & FAQ */}
+      <section className="py-12 bg-[#f8f9fa] border-t border-gray-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
-              {t('landing.solution.title')}
-            </h2>
-            <p className="text-base text-gray-600">
-              {language === 'hi' 
-                ? 'चार सीधे चरणों में अपनी उपज बेचें — बिना किसी एजेंट या बिचौलिये के' 
-                : 'Four transparent steps from your village home to bank account credit'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+          {/* Stats */}
+          <div className="bg-white border border-gray-200 p-8 shadow-sm text-center rounded-sm">
+            <h3 className="text-lg font-bold text-[#14532d] mb-8 inline-block border-b-2 border-[#f97316] pb-1">
+              Procurement Statistics (Last 5 Years)
+            </h3>
             
-            {/* Step 1 */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 relative space-y-4 shadow-xs">
-              <div className="w-12 h-12 rounded-xl bg-[#14532d] text-white flex items-center justify-center font-bold text-lg shadow-xs">
-                1
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 divide-x divide-gray-100">
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-[#22c55e]/10 rounded-full flex items-center justify-center mb-3">
+                  <Users className="w-6 h-6 text-[#14532d]" />
+                </div>
+                <div className="text-2xl font-black text-[#1f2937]">1.18 Cr+</div>
+                <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wider">Registered Farmers</div>
               </div>
-              <h4 className="text-lg font-bold text-gray-900">{t('landing.solution.step1')}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{t('landing.solution.step1Desc')}</p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 relative space-y-4 shadow-xs">
-              <div className="w-12 h-12 rounded-xl bg-[#f97316] text-white flex items-center justify-center font-bold text-lg shadow-xs">
-                2
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-[#22c55e]/10 rounded-full flex items-center justify-center mb-3">
+                  <Truck className="w-6 h-6 text-[#14532d]" />
+                </div>
+                <div className="text-2xl font-black text-[#1f2937]">241.56 L</div>
+                <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wider">Grain Procured (MT)</div>
               </div>
-              <h4 className="text-lg font-bold text-gray-900">{t('landing.solution.step2')}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{t('landing.solution.step2Desc')}</p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 relative space-y-4 shadow-xs">
-              <div className="w-12 h-12 rounded-xl bg-[#14532d] text-white flex items-center justify-center font-bold text-lg shadow-xs">
-                3
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-[#22c55e]/10 rounded-full flex items-center justify-center mb-3">
+                  <span className="text-2xl font-serif text-[#14532d]">₹</span>
+                </div>
+                <div className="text-2xl font-black text-[#1f2937]">69,111 Cr</div>
+                <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wider">Total Payment (₹)</div>
               </div>
-              <h4 className="text-lg font-bold text-gray-900">{t('landing.solution.step3')}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{t('landing.solution.step3Desc')}</p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 relative space-y-4 shadow-xs">
-              <div className="w-12 h-12 rounded-xl bg-[#f97316] text-white flex items-center justify-center font-bold text-lg shadow-xs">
-                4
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-[#22c55e]/10 rounded-full flex items-center justify-center mb-3">
+                  <Database className="w-6 h-6 text-[#14532d]" />
+                </div>
+                <div className="text-2xl font-black text-[#1f2937]">4,520</div>
+                <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wider">Active Centers</div>
               </div>
-              <h4 className="text-lg font-bold text-gray-900">{t('landing.solution.step4')}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{t('landing.solution.step4Desc')}</p>
             </div>
-
           </div>
 
-          <div className="text-center pt-4">
-            <Link
-              href="/centers"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#14532d] hover:bg-[#0f3d21] text-white font-bold text-sm shadow-md transition"
-            >
-              <span>{language === 'hi' ? 'अपने निकटतम केंद्र खोजें' : 'Find Centers Near You'}</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 5. CURRENT MSP RATES SECTION */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          {/* FAQ */}
+          <div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-1 h-6 bg-[#f97316]"></div>
+              <h2 className="text-xl font-bold text-[#14532d]">Frequently Asked Questions (FAQ)</h2>
+            </div>
+            
             <div className="space-y-2">
-              <span className="text-xs font-bold tracking-widest text-[#14532d] uppercase">
-                {language === 'hi' ? 'सरकारी न्यूनतम समर्थन मूल्य' : 'Government Mandated Rates'}
-              </span>
-              <h2 className="text-3xl font-extrabold text-gray-900">
-                {language === 'hi' ? 'वर्तमान खरीद दरें (MSP 2026)' : 'Active Procurement Rates (MSP 2026)'}
-              </h2>
+              {[
+                { q: 'faq_q1' },
+                { q: 'faq_q2' },
+                { q: 'faq_q3' }
+              ].map((faq, idx) => (
+                <div key={idx} className="bg-white border border-gray-200 p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 rounded-sm">
+                  <span className="text-sm font-semibold text-gray-800">{faq.q}</span>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+              ))}
             </div>
-            <p className="text-xs text-gray-600 max-w-md">
-              {language === 'hi' 
-                ? 'सभी भुगतान सीधे आधार से जुड़े बैंक खाते में डीबीटी (DBT) द्वारा 48 से 72 घंटों में किए जाते हैं।' 
-                : 'All payments disbursed directly via DBT into Aadhaar-linked accounts within 48 to 72 hours.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-            {cropsList.map((crop: any) => (
-              <div 
-                key={crop.type || crop.id} 
-                className="p-5 rounded-2xl bg-white border border-gray-200 hover:border-[#14532d] transition-all hover:-translate-y-1 shadow-xs"
-              >
-                <div className="text-3xl mb-2">{crop.emoji || '🌾'}</div>
-                <div className="text-base font-bold text-gray-900">
-                  {language === 'hi' ? (crop.nameHi || crop.name) : (crop.nameEn || crop.name)}
-                </div>
-                <div className="text-xs text-gray-600 mb-3">
-                  {language === 'hi' ? (crop.seasonHi || crop.season) : crop.season}
-                </div>
-                <div className="pt-3 border-t border-gray-100 flex items-baseline justify-between">
-                  <span className="text-lg font-black text-[#14532d]">₹{crop.mspRate}</span>
-                  <span className="text-[11px] text-gray-500">/ {language === 'hi' ? 'क्विंटल' : 'quintal'}</span>
-                </div>
-              </div>
-            ))}
           </div>
 
         </div>
       </section>
 
-      {/* 6. BOTTOM CALL TO ACTION */}
-      <section className="py-20 bg-[#14532d] text-white text-center relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 relative z-10">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-serif">
-            {language === 'hi' 
-              ? 'क्या आप अपनी अगली फसल बेचने के लिए तैयार हैं?' 
-              : 'Ready to Experience Hassle-Free Procurement?'}
-          </h2>
-          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto">
-            {language === 'hi' 
-              ? 'बिना किसी परेशानी के अपना समय तय करें और अपनी मेहनत का पूरा मूल्य पाएं।' 
-              : 'Book your slot in under 2 minutes. Receive instant SMS token and arrive with confidence.'}
-          </p>
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            {isAuthenticated && user ? (
-              <Link
-                href="/dashboard"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-base shadow-lg transition"
-              >
-                {language === 'hi' ? 'मेरा डैशबोर्ड खोलें' : 'Go to My Dashboard'}
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-base shadow-lg transition"
-              >
-                {language === 'hi' ? 'किसान लॉगिन / पंजीकरण' : 'Farmer Sign In / Register'}
-              </Link>
-            )}
-            <Link
-              href="/centers"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-[#14532d] hover:bg-gray-100 font-bold text-base transition"
-            >
-              {language === 'hi' ? 'खरीद केंद्र व अनुसूची' : 'View Procurement Centers'}
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Footer bar placeholder since the actual footer is in layout.tsx */}
+      <div className="bg-[#14532d] h-12 w-full mt-auto"></div>
 
     </div>
   );

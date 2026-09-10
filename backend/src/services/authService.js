@@ -1,7 +1,8 @@
-const { db, auth } = require('../config/firebase');
+const { supabase } = require('../config/supabase');
 const env = require('../config/env');
 const crypto = require('crypto');
 const farmerService = require('./farmerService');
+const notificationService = require('./notificationService');
 
 // In-memory OTP store with expiration (for serverless/single-session verification)
 const otpStore = new Map();
@@ -17,7 +18,6 @@ function formatE164Phone(phone) {
 
 /**
  * Dispatches an OTP to a farmer.
- * Separation of mock vs production SMS provider (Safety Requirement #1).
  */
 async function sendOtp({ identifier, method }) {
   if (!identifier) {
@@ -40,19 +40,18 @@ async function sendOtp({ identifier, method }) {
     expiresAt
   });
 
-  // Safety Requirement #1: Real SMS vs Mock simulation
   if (env.smsProvider === 'mock') {
     return {
       message: 'OTP sent successfully (Development Mock Provider).',
       provider: 'mock',
-      // Only disclose simulatedOtp in development
       ...(env.isProduction ? {} : { simulatedOtp: generatedOtp }),
       expiresInMinutes: 10
     };
   }
 
-  // Production SMS provider integration point (e.g. Fast2SMS / Government SMS Gateway)
-  console.log(`[SMS Provider: ${env.smsProvider}] Sending OTP to ${identifier}`);
+  // Call the actual notification service
+  await notificationService.sendSMS(identifier, `Your Mandi Mitra verification code is ${generatedOtp}. Valid for 10 minutes.`);
+  
   return {
     message: 'OTP dispatched successfully to your registered mobile.',
     provider: env.smsProvider,
@@ -61,48 +60,14 @@ async function sendOtp({ identifier, method }) {
 }
 
 /**
- * Resolves or creates a Firebase Auth user and returns the actual Firebase UID.
+ * Resolves or creates a Supabase Auth user and returns the UID.
  */
-async function resolveOrCreateFirebaseAuthUser({ phone, name }) {
-  let userRecord = null;
+async function resolveOrCreateSupabaseAuthUser({ phone, name }) {
   const formattedPhone = formatE164Phone(phone);
-
-  if (formattedPhone) {
-    try {
-      userRecord = await auth.getUserByPhoneNumber(formattedPhone);
-    } catch (err) {
-      if (err.code === 'auth/user-not-found') {
-        try {
-          userRecord = await auth.createUser({
-            phoneNumber: formattedPhone,
-            displayName: name || 'Kisan Mitra'
-          });
-        } catch (createErr) {
-          console.warn('[AuthService] auth.createUser with phone notice:', createErr.code || createErr.message);
-        }
-      } else {
-        console.warn('[AuthService] auth.getUserByPhoneNumber notice:', err.code || err.message);
-      }
-    }
-  }
-
-  if (!userRecord) {
-    try {
-      userRecord = await auth.createUser({
-        displayName: name || 'Kisan Mitra'
-      });
-    } catch (err) {
-      console.warn('[AuthService] auth.createUser generic notice:', err.code || err.message);
-    }
-  }
-
-  if (userRecord && userRecord.uid) {
-    return userRecord.uid;
-  }
-
-  // Fallback if Firebase Identity Platform is unconfigured in GCP project:
-  // Generate a standard 28-character Firebase-style UID (cryptographic random, not phone number)
-  return crypto.randomBytes(14).toString('hex');
+  
+  // For the sake of the hackathon, we will generate a UUID for the farmer
+  // if we aren't using strict Supabase Auth yet.
+  return crypto.randomUUID();
 }
 
 /**
@@ -118,7 +83,6 @@ async function verifyOtp({ identifier, method, otp, registrationData }) {
 
   const stored = otpStore.get(identifier);
 
-  // In development, default mock OTP (1234) is always valid if mock provider is active
   const isValidMock = !env.isProduction && env.smsProvider === 'mock' && otp === env.mockOtpDefault;
 
   if (!isValidMock) {
@@ -138,51 +102,24 @@ async function verifyOtp({ identifier, method, otp, registrationData }) {
     }
   }
 
-  // Clean up used OTP
   otpStore.delete(identifier);
 
-  // Look up existing farmer
+  // Look up existing farmer in Supabase
   let matchedFarmer = null;
 
   if (method === 'mobile') {
-    const snap = await db.collection('farmers').where('phone', '==', identifier).limit(1).get();
-    if (!snap.empty) matchedFarmer = { id: snap.docs[0].id, ...snap.docs[0].data() };
+    const { data } = await supabase.from('farmers').select('*').eq('phone', identifier).single();
+    if (data) matchedFarmer = data;
   } else if (method === 'aadhaar') {
-    const snap = await db.collection('farmers').where('aadhaarLast4', '==', identifier.slice(-4)).limit(1).get();
-    if (!snap.empty) matchedFarmer = { id: snap.docs[0].id, ...snap.docs[0].data() };
+    const { data } = await supabase.from('farmers').select('*').eq('aadhaarLast4', identifier.slice(-4)).single();
+    if (data) matchedFarmer = data;
   } else if (method === 'farmerId') {
-    const snap = await db.collection('farmers').where('farmerId', '==', identifier).limit(1).get();
-    if (!snap.empty) matchedFarmer = { id: snap.docs[0].id, ...snap.docs[0].data() };
+    const { data } = await supabase.from('farmers').select('*').eq('id', identifier).single();
+    if (data) matchedFarmer = data;
   }
 
-  // Case A: Existing Farmer Login
   if (matchedFarmer) {
-    let actualUid = matchedFarmer.id;
-    try {
-      const e164Phone = formatE164Phone(matchedFarmer.phone);
-      if (e164Phone) {
-        const userRecord = await auth.getUserByPhoneNumber(e164Phone);
-        if (userRecord && userRecord.uid) {
-          const actualDoc = await db.collection('farmers').doc(userRecord.uid).get();
-          if (actualDoc.exists) {
-            actualUid = userRecord.uid;
-            matchedFarmer = { id: actualDoc.id, ...actualDoc.data() };
-          }
-        }
-      }
-    } catch (e) {
-      // Keep existing matchedFarmer.id
-    }
-
-    let token;
-    try {
-      token = env.isProduction 
-        ? await auth.createCustomToken(actualUid)
-        : `mock-token-${actualUid}`;
-    } catch (e) {
-      token = `mock-token-${actualUid}`;
-    }
-
+    const token = `mock-token-${matchedFarmer.id}`;
     return {
       isNewFarmer: false,
       token,
@@ -192,12 +129,13 @@ async function verifyOtp({ identifier, method, otp, registrationData }) {
 
   // Case B: New Farmer Registration
   const phoneToUse = (method === 'mobile') ? identifier : (registrationData?.phone || identifier);
-  const actualFirebaseUid = await resolveOrCreateFirebaseAuthUser({
+  const actualUid = await resolveOrCreateSupabaseAuthUser({
     phone: phoneToUse,
     name: registrationData?.name
   });
 
   const regPayload = {
+    id: actualUid,
     name: registrationData?.name?.trim() || `Kisan (${phoneToUse.slice(-4)})`,
     nameHi: registrationData?.nameHi || registrationData?.name?.trim() || `किसान (${phoneToUse.slice(-4)})`,
     phone: phoneToUse,
@@ -210,20 +148,11 @@ async function verifyOtp({ identifier, method, otp, registrationData }) {
     languagePref: registrationData?.languagePref || 'hi'
   };
 
-  const newFarmerProfile = await farmerService.registerFarmer(actualFirebaseUid, regPayload);
-
-  let token;
-  try {
-    token = env.isProduction
-      ? await auth.createCustomToken(actualFirebaseUid)
-      : `mock-token-${actualFirebaseUid}`;
-  } catch (e) {
-    token = `mock-token-${actualFirebaseUid}`;
-  }
+  const newFarmerProfile = await farmerService.registerFarmer(actualUid, regPayload);
 
   return {
     isNewFarmer: true,
-    token,
+    token: `mock-token-${actualUid}`,
     farmer: newFarmerProfile,
     message: 'Farmer registered and authenticated successfully.'
   };

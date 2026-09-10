@@ -99,11 +99,13 @@ export default function LoginPage() {
     } : undefined;
 
     const res = await verifyOtp(identifier, method, otp, regData);
-    if (!res.success) {
-      // Fallback local login if mock OTP matches
-      login({ identifier, method, otp, name: farmerName, village, district });
-    }
     setLoading(false);
+    
+    if (!res.success) {
+      setError(res.message || 'OTP verification failed. Ensure the backend is running.');
+      return;
+    }
+    
     router.push('/dashboard');
   };
 
