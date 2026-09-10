@@ -5,7 +5,7 @@ const { calculateHaversineDistance } = require('../utils/geo');
  * Retrieves procurement centers with dynamic geonavigation distance,
  * crop filters, crowd filters, and text search.
  */
-async function getAllCenters({ lat, lng, crop, crowd, status, search }) {
+async function getAllCenters({ lat, lng, crop, crowd, status, search, district, tehsil }) {
   const userLat = lat !== undefined ? parseFloat(lat) : null;
   const userLng = lng !== undefined ? parseFloat(lng) : null;
 
@@ -30,6 +30,26 @@ async function getAllCenters({ lat, lng, crop, crowd, status, search }) {
     };
   });
 
+  // Filter by District / Region
+  if (district && district !== 'all') {
+    const dLower = district.trim().toLowerCase();
+    centers = centers.filter(c => 
+      (c.district && c.district.toLowerCase() === dLower) ||
+      (c.districtHi && c.districtHi.includes(district)) ||
+      (c.region && c.region.toLowerCase().includes(dLower))
+    );
+  }
+
+  // Filter by Area / Tehsil
+  if (tehsil && tehsil !== 'all') {
+    const tLower = tehsil.trim().toLowerCase();
+    centers = centers.filter(c => 
+      (c.tehsil && c.tehsil.toLowerCase() === tLower) ||
+      (c.tehsilHi && c.tehsilHi.includes(tehsil)) ||
+      (c.address && c.address.toLowerCase().includes(tLower))
+    );
+  }
+
   // Filter by crop
   if (crop && crop !== 'all') {
     centers = centers.filter(c => Array.isArray(c.cropsAccepted) && c.cropsAccepted.includes(crop));
@@ -47,7 +67,10 @@ async function getAllCenters({ lat, lng, crop, crowd, status, search }) {
       (c.name && c.name.toLowerCase().includes(q)) ||
       (c.nameHi && c.nameHi.includes(q)) ||
       (c.district && c.district.toLowerCase().includes(q)) ||
-      (c.districtHi && c.districtHi.includes(q))
+      (c.districtHi && c.districtHi.includes(q)) ||
+      (c.tehsil && c.tehsil.toLowerCase().includes(q)) ||
+      (c.tehsilHi && c.tehsilHi.includes(q)) ||
+      (c.address && c.address.toLowerCase().includes(q))
     );
   }
 

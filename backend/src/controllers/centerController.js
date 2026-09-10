@@ -3,8 +3,8 @@ const { successResponse } = require('../utils/response');
 
 async function getCentersHandler(req, res, next) {
   try {
-    const { lat, lng, crop, crowd, status, search } = req.query;
-    const centers = await centerService.getAllCenters({ lat, lng, crop, crowd, status, search });
+    const { lat, lng, crop, crowd, status, search, district, tehsil } = req.query;
+    const centers = await centerService.getAllCenters({ lat, lng, crop, crowd, status, search, district, tehsil });
     return successResponse(res, { count: centers.length, centers });
   } catch (err) {
     next(err);
