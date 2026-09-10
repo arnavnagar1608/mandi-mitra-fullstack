@@ -27,6 +27,9 @@ import {
   LogIn
 } from 'lucide-react';
 
+import { NoticeTicker } from '@/components/home/NoticeTicker';
+import { CitizenServices } from '@/components/home/CitizenServices';
+
 export default function HomePage() {
   const { t, language } = useLanguage();
   const { isAuthenticated, user } = useAuth();
@@ -52,10 +55,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen" id="main-content">
       
+      {/* Government Announcement & Status Marquee */}
+      <NoticeTicker />
+
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-[#E8DFD0]/60 bg-gradient-to-b from-[#FDF8F0] via-[#FAF3E6] to-[#F5EDE0]">
+      <section className="relative overflow-hidden pt-8 pb-16 lg:pt-16 lg:pb-24 border-b border-[#E8DFD0]/80 bg-gradient-to-b from-[#FFFDF9] via-[#FAF3E6] to-[#F5EDE0]">
         
         {/* Soft decorative background circles */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D4912A]/10 rounded-full blur-3xl pointer-events-none" />
@@ -198,48 +204,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. REAL-TIME STATS STRIP */}
-      <section className="bg-[#5B7F3B] text-white py-8 border-y border-[#466B2A]">
+      {/* 2. CITIZEN SERVICES QUICK GRID (e-Uparjan Service Navigation) */}
+      <CitizenServices />
+
+      {/* 3. REAL-TIME STATS STRIP */}
+      <section className="bg-[#166534] text-white py-8 border-y border-[#14532d] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             
             <div className="space-y-1">
               <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-[#FDF8F0]">
-                <Users className="w-6 h-6 text-[#E8A94D]" />
+                <Users className="w-6 h-6 text-[#f97316]" />
                 <span>12,450+</span>
               </div>
-              <p className="text-xs sm:text-sm text-[#E8DFD0] font-medium">{t('landing.stats.farmersServed')}</p>
+              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.farmersServed')}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-[#FDF8F0]">
-                <Building2 className="w-6 h-6 text-[#E8A94D]" />
+                <Building2 className="w-6 h-6 text-[#f97316]" />
                 <span>89</span>
               </div>
-              <p className="text-xs sm:text-sm text-[#E8DFD0] font-medium">{t('landing.stats.centersActive')}</p>
+              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.centersActive')}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-[#FDF8F0]">
-                <IndianRupee className="w-6 h-6 text-[#E8A94D]" />
+                <IndianRupee className="w-6 h-6 text-[#f97316]" />
                 <span>₹28.4 Cr</span>
               </div>
-              <p className="text-xs sm:text-sm text-[#E8DFD0] font-medium">{t('landing.stats.croresDisbursed')}</p>
+              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.croresDisbursed')}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl font-black font-serif text-[#FDF8F0]">
-                <Clock className="w-6 h-6 text-[#E8A94D]" />
+                <Clock className="w-6 h-6 text-[#f97316]" />
                 <span>78%</span>
               </div>
-              <p className="text-xs sm:text-sm text-[#E8DFD0] font-medium">{t('landing.stats.avgWaitReduced')}</p>
+              <p className="text-xs sm:text-sm text-green-100 font-medium">{t('landing.stats.avgWaitReduced')}</p>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* 3. THE 3 CORE PROBLEMS → TRANSFORMED */}
+      {/* 4. THE 3 CORE PROBLEMS → TRANSFORMED */}
       <section className="py-20 bg-[#FDF8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
           
