@@ -20,7 +20,8 @@ import {
   MapPin,
   Building,
   UserPlus,
-  LogIn
+  LogIn,
+  Lightbulb
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -319,8 +320,9 @@ export default function LoginPage() {
                   className="w-full px-3 py-2 border border-gray-300 bg-white text-center tracking-widest text-lg font-bold focus:outline-hidden focus:border-[#14532d]"
                   required
                 />
-                <span className="text-xs text-[#14532d] font-semibold block mt-2">
-                  💡 {language === 'hi' ? `डेमो कोड: ${simulatedOtp}` : `Demo auto-code: ${simulatedOtp}`}
+                <span className="text-xs text-[#14532d] font-semibold flex items-center gap-1 mt-2">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
+                  {language === 'hi' ? `डेमो कोड: ${simulatedOtp}` : `Demo auto-code: ${simulatedOtp}`}
                 </span>
               </div>
 

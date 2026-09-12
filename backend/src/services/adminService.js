@@ -1,6 +1,7 @@
 'use strict';
 
 const { db, admin } = require('../config/firebase');
+const { supabase } = require('../config/supabase');
 
 /**
  * Get dashboard metrics — total farmers, bookings today, active centers, total payments.
@@ -196,6 +197,175 @@ async function getCenterAnalytics(centerId) {
   };
 }
 
+const CENTER_META = {
+  c1: { name: 'Bhopal Central Mandi', nameHi: 'भोपाल सेंट्रल मंडी' },
+  c2: { name: 'Indore Mandi Complex', nameHi: 'इंदौर मंडी कॉम्प्लेक्स' },
+  c3: { name: 'Ujjain Krishi Upaj Mandi', nameHi: 'उज्जैन कृषि उपज मंडी' },
+  c4: { name: 'Vidisha Grain Mandi', nameHi: 'विदिशा अनाज मंडी' },
+  c5: { name: 'Jabalpur Krishi Mandi', nameHi: 'जबलपुर कृषि मंडी' },
+  c6: { name: 'Gwalior Mandi Center', nameHi: 'ग्वालियर मंडी केंद्र' },
+};
+
+// In-memory officer store for zero-friction fallback
+const registeredOfficersMemory = new Map([
+  [
+    'officer-mp-001',
+    {
+      officerId: 'OFFICER-MP-001',
+      aliases: ['admin@mandimitra.gov.in', 'officer_1', 'admin', 'rajesh.sharma'],
+      password: process.env.OFFICER_PASSWORD || 'Mandi@Officer2026',
+      name: 'Shri Rajesh Sharma',
+      nameHi: 'श्री राजेश शर्मा',
+      designation: 'Mandi Center In-Charge',
+      designationHi: 'मंडी केंद्र प्रभारी',
+      role: 'center_officer',
+      assignedCenterId: 'c1',
+      centerName: 'Bhopal Central Mandi',
+      centerNameHi: 'भोपाल सेंट्रल मंडी'
+    }
+  ],
+  [
+    'officer-mp-002',
+    {
+      officerId: 'OFFICER-MP-002',
+      aliases: ['indore@mandimitra.gov.in', 'officer_2', 'anita.verma'],
+      password: process.env.OFFICER_PASSWORD || 'Mandi@Officer2026',
+      name: 'Smt. Anita Verma',
+      nameHi: 'श्रीमती अनीता वर्मा',
+      designation: 'Senior Procurement Inspector',
+      designationHi: 'वरिष्ठ खरीद निरीक्षक',
+      role: 'center_officer',
+      assignedCenterId: 'c2',
+      centerName: 'Indore Mandi Complex',
+      centerNameHi: 'इंदौर मंडी कॉम्प्लेक्स'
+    }
+  ],
+  [
+    'super-admin-01',
+    {
+      officerId: 'SUPER-ADMIN-01',
+      aliases: ['superadmin@mandimitra.gov.in', 'super_admin'],
+      password: process.env.SUPER_ADMIN_PASSWORD || 'Super@Admin2026',
+      name: 'Dr. Alok Nath (IAS)',
+      nameHi: 'डॉ. आलोक नाथ (आईएएस)',
+      designation: 'State Procurement Commissioner',
+      designationHi: 'राज्य खरीद आयुक्त',
+      role: 'super_admin',
+      assignedCenterId: null,
+      centerName: 'All Mandis (Headquarters)',
+      centerNameHi: 'सभी मंडियां (मुख्यालय)'
+    }
+  ]
+]);
+
+/**
+ * Register a new Mandi Officer in Supabase database & in-memory registry.
+ */
+async function registerOfficer(data) {
+  const { 
+    officerId, 
+    password, 
+    name, 
+    nameHi, 
+    designation, 
+    designationHi, 
+    role = 'center_officer', 
+    assignedCenterId = 'c1',
+    phone, 
+    email 
+  } = data;
+
+  if (!officerId || !password || !name) {
+    const error = new Error('Officer ID, full name, and password are required for registration.');
+    error.statusCode = 400;
+    error.code = 'INVALID_INPUT';
+    throw error;
+  }
+
+  const cleanId = String(officerId).trim();
+  const normalizedKey = cleanId.toLowerCase();
+
+  // Check in memory first
+  if (registeredOfficersMemory.has(normalizedKey)) {
+    const error = new Error(`Officer with ID '${cleanId}' is already registered.`);
+    error.statusCode = 409;
+    error.code = 'OFFICER_EXISTS';
+    throw error;
+  }
+
+  const centerInfo = CENTER_META[assignedCenterId] || {
+    name: data.centerName || 'Mandi Procurement Center',
+    nameHi: data.centerNameHi || 'मंडी खरीद केंद्र'
+  };
+
+  const newOfficer = {
+    officerId: cleanId,
+    aliases: [cleanId.toLowerCase(), email?.toLowerCase()].filter(Boolean),
+    password: password.trim(),
+    name: name.trim(),
+    nameHi: nameHi?.trim() || name.trim(),
+    designation: designation?.trim() || 'Mandi Procurement Officer',
+    designationHi: designationHi?.trim() || 'मंडी खरीद अधिकारी',
+    role,
+    assignedCenterId,
+    centerName: centerInfo.name,
+    centerNameHi: centerInfo.nameHi,
+    phone: phone || '',
+    email: email || '',
+  };
+
+  // 1. Persist to Supabase admin_officers table if accessible
+  try {
+    const supabasePayload = {
+      officer_id: newOfficer.officerId,
+      password: newOfficer.password,
+      name: newOfficer.name,
+      name_hi: newOfficer.nameHi,
+      designation: newOfficer.designation,
+      designation_hi: newOfficer.designationHi,
+      role: newOfficer.role,
+      assigned_center_id: newOfficer.assignedCenterId,
+      center_name: newOfficer.centerName,
+      center_name_hi: newOfficer.centerNameHi,
+      phone: newOfficer.phone,
+      email: newOfficer.email,
+    };
+
+    const { data: dbData, error: dbError } = await supabase
+      .from('admin_officers')
+      .insert([supabasePayload])
+      .select()
+      .single();
+
+    if (dbError) {
+      console.warn('[Supabase admin_officers notice]:', dbError.message);
+    }
+  } catch (err) {
+    console.warn('[Supabase admin_officers notice]:', err.message);
+  }
+
+  // 2. Save into memory registry
+  registeredOfficersMemory.set(normalizedKey, newOfficer);
+
+  const token = `mock-token-${newOfficer.role === 'super_admin' ? 'super_admin' : 'officer_1'}`;
+
+  return {
+    token,
+    officer: {
+      officerId: newOfficer.officerId,
+      name: newOfficer.name,
+      nameHi: newOfficer.nameHi,
+      designation: newOfficer.designation,
+      designationHi: newOfficer.designationHi,
+      role: newOfficer.role,
+      assignedCenterId: newOfficer.assignedCenterId,
+      centerName: newOfficer.centerName,
+      centerNameHi: newOfficer.centerNameHi
+    },
+    message: 'Officer account created and authenticated successfully.'
+  };
+}
+
 /**
  * Authenticate Mandi Officer / Center In-Charge credentials.
  */
@@ -207,56 +377,49 @@ async function officerLogin({ officerId, password }) {
     throw error;
   }
 
-  // Pre-configured official officer records with fallback credentials
-  const defaultPassword = process.env.OFFICER_PASSWORD || 'Mandi@Officer2026';
-  const superAdminPassword = process.env.SUPER_ADMIN_PASSWORD || 'Super@Admin2026';
+  const queryId = officerId.trim();
+  const lowerQuery = queryId.toLowerCase();
 
-  const validOfficers = [
-    {
-      officerId: 'OFFICER-MP-001',
-      aliases: ['admin@mandimitra.gov.in', 'officer_1', 'admin', 'rajesh.sharma'],
-      password: defaultPassword,
-      name: 'Shri Rajesh Sharma',
-      nameHi: 'श्री राजेश शर्मा',
-      designation: 'Mandi Center In-Charge',
-      designationHi: 'मंडी केंद्र प्रभारी',
-      role: 'center_officer',
-      assignedCenterId: 'c1',
-      centerName: 'Bhopal Central Mandi',
-      centerNameHi: 'भोपाल सेंट्रल मंडी'
-    },
-    {
-      officerId: 'OFFICER-MP-002',
-      aliases: ['indore@mandimitra.gov.in', 'officer_2', 'anita.verma'],
-      password: defaultPassword,
-      name: 'Smt. Anita Verma',
-      nameHi: 'श्रीमती अनीता वर्मा',
-      designation: 'Senior Procurement Inspector',
-      designationHi: 'वरिष्ठ खरीद निरीक्षक',
-      role: 'center_officer',
-      assignedCenterId: 'c2',
-      centerName: 'Indore Mandi Complex',
-      centerNameHi: 'इंदौर मंडी कॉम्प्लेक्स'
-    },
-    {
-      officerId: 'SUPER-ADMIN-01',
-      aliases: ['superadmin@mandimitra.gov.in', 'super_admin'],
-      password: superAdminPassword,
-      name: 'Dr. Alok Nath (IAS)',
-      nameHi: 'डॉ. आलोक नाथ (आईएएस)',
-      designation: 'State Procurement Commissioner',
-      designationHi: 'राज्य खरीद आयुक्त',
-      role: 'super_admin',
-      assignedCenterId: null,
-      centerName: 'All Mandis (Headquarters)',
-      centerNameHi: 'सभी मंडियां (मुख्यालय)'
+  let matched = null;
+
+  // Step 1: Check Supabase admin_officers table
+  try {
+    const { data: dbOfficer, error: dbErr } = await supabase
+      .from('admin_officers')
+      .select('*')
+      .or(`officer_id.ilike.${queryId},email.ilike.${queryId}`)
+      .single();
+
+    if (dbOfficer && !dbErr) {
+      matched = {
+        officerId: dbOfficer.officer_id,
+        password: dbOfficer.password,
+        name: dbOfficer.name,
+        nameHi: dbOfficer.name_hi || dbOfficer.name,
+        designation: dbOfficer.designation,
+        designationHi: dbOfficer.designation_hi || dbOfficer.designation,
+        role: dbOfficer.role || 'center_officer',
+        assignedCenterId: dbOfficer.assigned_center_id || 'c1',
+        centerName: dbOfficer.center_name,
+        centerNameHi: dbOfficer.center_name_hi || dbOfficer.center_name,
+      };
     }
-  ];
+  } catch (err) {
+    // Supabase table query notice (will fall back to memory)
+  }
 
-  const matched = validOfficers.find(o => 
-    o.officerId.toLowerCase() === officerId.trim().toLowerCase() ||
-    o.aliases.some(a => a.toLowerCase() === officerId.trim().toLowerCase())
-  );
+  // Step 2: Fallback to memory store
+  if (!matched) {
+    for (const officer of registeredOfficersMemory.values()) {
+      if (
+        officer.officerId.toLowerCase() === lowerQuery ||
+        (officer.aliases && officer.aliases.some(a => a.toLowerCase() === lowerQuery))
+      ) {
+        matched = officer;
+        break;
+      }
+    }
+  }
 
   if (!matched || matched.password !== password.trim()) {
     const error = new Error('Invalid Officer ID or Password. Access denied.');
@@ -290,4 +453,5 @@ module.exports = {
   updateQueueEntry,
   getCenterAnalytics,
   officerLogin,
+  registerOfficer,
 };

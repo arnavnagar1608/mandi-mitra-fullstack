@@ -139,11 +139,15 @@ export default function CenterDetailPage({ params }: Props) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="block text-gray-600 text-xs font-semibold">{t('centers.timing')}</span>
-                <span className="font-bold text-gray-900">{center.operatingHours}</span>
+                <span className="font-bold text-gray-900">
+                  {language === 'hi' ? (center.operatingHoursHi || center.operatingHours) : center.operatingHours}
+                </span>
               </div>
               <div>
                 <span className="block text-gray-600 text-xs font-semibold">{t('centers.capacity')}</span>
-                <span className="font-bold text-gray-900">{center.dailyCapacity}</span>
+                <span className="font-bold text-gray-900">
+                  {center.dailyCapacity} {language === 'hi' ? 'क्विंटल/दिन' : 'Qt/day'}
+                </span>
               </div>
             </div>
           </div>
@@ -178,7 +182,11 @@ export default function CenterDetailPage({ params }: Props) {
                 </div>
                 <div>
                   <div className="text-gray-600 text-xs font-bold uppercase">{language === 'hi' ? 'फसल' : 'Crop'}</div>
-                  <div className="font-bold text-gray-900 text-base uppercase">{selectedCrop}</div>
+                  <div className="font-bold text-gray-900 text-base uppercase">
+                    {language === 'hi' 
+                      ? (crops.find(c => c.type === selectedCrop)?.nameHi || selectedCrop) 
+                      : (crops.find(c => c.type === selectedCrop)?.nameEn || selectedCrop)}
+                  </div>
                 </div>
                 <div>
                   <div className="text-gray-600 text-xs font-bold uppercase">{language === 'hi' ? 'दिनांक' : 'Date'}</div>
@@ -190,14 +198,21 @@ export default function CenterDetailPage({ params }: Props) {
                 </div>
                 <div>
                   <div className="text-gray-600 text-xs font-bold uppercase">{language === 'hi' ? 'मात्रा' : 'Quantity'}</div>
-                  <div className="font-bold text-gray-900 text-base">{quantity} Qt.</div>
+                  <div className="font-bold text-gray-900 text-base">{quantity} {language === 'hi' ? 'क्विंटल' : 'Qt.'}</div>
                 </div>
               </div>
 
               <div className="mt-6 flex justify-center border-t border-gray-300 pt-4">
                 <div className="text-center">
-                  <QrCode className="w-20 h-20 mx-auto" />
-                  <div className="text-xs font-mono mt-1 text-gray-700">MM-TKN-{tokenGenerated}</div>
+                  <div className="text-xs font-mono mt-1 font-bold text-gray-700">
+                    {language === 'hi' ? 'टोकन नंबर:' : 'TOKEN NO:'} MM-TKN-{tokenGenerated}
+                  </div>
+                  <button 
+                    onClick={() => window.print()}
+                    className="mt-4 px-6 py-2 bg-[#14532d] text-white text-sm font-bold rounded-sm shadow-sm border border-[#0f3f22] hover:bg-[#0f3f22] transition"
+                  >
+                    {language === 'hi' ? 'रसीद प्रिंट करें' : 'PRINT RECEIPT'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -225,6 +240,9 @@ export default function CenterDetailPage({ params }: Props) {
                     {center.cropsAccepted.map((cKey) => {
                       const cData = crops.find(c => c.type === cKey);
                       const isSelected = selectedCrop === cKey;
+                      const cropDisplayName = language === 'hi' 
+                        ? (cData?.nameHi || cData?.nameEn || cKey) 
+                        : (cData?.nameEn || cKey);
                       return (
                         <button
                           type="button"
@@ -234,8 +252,10 @@ export default function CenterDetailPage({ params }: Props) {
                             isSelected ? 'border-[#14532d] bg-[#14532d] text-white' : 'border-gray-400 bg-white text-gray-900 hover:bg-gray-50'
                           }`}
                         >
-                          <div className="text-sm font-bold uppercase">{cData?.nameEn || cKey}</div>
-                          <div className={`text-xs mt-1 ${isSelected ? 'text-green-200' : 'text-gray-600'}`}>MSP: ₹{cData?.mspRate}</div>
+                          <div className="text-sm font-bold uppercase">{cropDisplayName}</div>
+                          <div className={`text-xs mt-1 ${isSelected ? 'text-green-200' : 'text-gray-600'}`}>
+                            {language === 'hi' ? `एमएसपी (MSP): ₹${cData?.mspRate}` : `MSP: ₹${cData?.mspRate}`}
+                          </div>
                         </button>
                       );
                     })}
@@ -356,11 +376,15 @@ export default function CenterDetailPage({ params }: Props) {
                 <div className="p-4 space-y-3 text-sm">
                   <div className="flex justify-between border-b border-gray-100 pb-1">
                     <span className="text-gray-600 font-bold">{language === 'hi' ? 'फसल' : 'Crop'}</span>
-                    <span className="font-bold text-gray-900 uppercase">{selectedCrop}</span>
+                    <span className="font-bold text-gray-900 uppercase">
+                      {language === 'hi' 
+                        ? (crops.find(c => c.type === selectedCrop)?.nameHi || selectedCrop) 
+                        : (crops.find(c => c.type === selectedCrop)?.nameEn || selectedCrop)}
+                    </span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-1">
                     <span className="text-gray-600 font-bold">{language === 'hi' ? 'मात्रा' : 'Qty'}</span>
-                    <span className="font-bold text-gray-900">{quantity} Qt</span>
+                    <span className="font-bold text-gray-900">{quantity} {language === 'hi' ? 'क्विंटल' : 'Qt'}</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-1">
                     <span className="text-gray-600 font-bold">{language === 'hi' ? 'दिनांक' : 'Date'}</span>
@@ -368,7 +392,7 @@ export default function CenterDetailPage({ params }: Props) {
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-1">
                     <span className="text-gray-600 font-bold">{language === 'hi' ? 'समय' : 'Time'}</span>
-                    <span className="font-bold text-gray-900">{selectedSlot ? `${selectedSlot.startTime}` : '-'}</span>
+                    <span className="font-bold text-gray-900">{selectedSlot ? `${selectedSlot.startTime} - ${selectedSlot.endTime}` : '-'}</span>
                   </div>
 
                   <div className="pt-2">

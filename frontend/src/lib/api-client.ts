@@ -48,7 +48,7 @@ export async function apiClient<T = any>(
 
     return body;
   } catch (err: any) {
-    console.error(`[API Client Error] ${endpoint}:`, err);
+    console.warn(`[API Client Network Notice] ${endpoint}:`, err?.message || err);
     return {
       success: false,
       error: {

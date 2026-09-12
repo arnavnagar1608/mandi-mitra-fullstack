@@ -268,8 +268,13 @@ export default function QueuePage() {
               </div>
             </div>
 
-            <div className="p-2 bg-white border-2 border-gray-800 rounded-sm">
-              <QrCode className="w-24 h-24 text-gray-900" />
+            <div className="p-2 bg-white border-2 border-gray-800 rounded-sm text-center">
+              <button 
+                onClick={() => window.print()}
+                className="w-full px-4 py-2 bg-[#14532d] text-white text-sm font-bold rounded-sm shadow-sm border border-[#0f3f22] hover:bg-[#0f3f22] transition"
+              >
+                {language === 'hi' ? 'रसीद प्रिंट करें' : 'PRINT RECEIPT'}
+              </button>
             </div>
           </div>
         </div>

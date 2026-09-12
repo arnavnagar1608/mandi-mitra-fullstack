@@ -150,7 +150,7 @@ export default function CentersPage() {
           <div className="bg-[#f8f9fa] border border-gray-300 p-3 rounded-sm flex items-center gap-3">
             <div className="text-sm">
               <span className="font-bold text-[#14532d] block uppercase tracking-wide">
-                {language === 'hi' ? 'ई-उपार्जन प्रणाली' : 'E-Uparjan System'}
+                {language === 'hi' ? 'मंडी मित्र प्रणाली' : 'Mandi Mitra System'}
               </span>
               <span className="text-gray-600 font-medium">
                 {language === 'hi' ? 'कुल 31 सक्रिय केंद्र' : '31 Active Centers'}
@@ -280,7 +280,7 @@ export default function CentersPage() {
                     {language === 'hi' ? center.nameHi : center.name}
                   </div>
                   <div className="text-xs font-bold px-2 py-0.5 bg-white text-[#14532d] rounded-sm uppercase shrink-0">
-                    {center.district}
+                    {language === 'hi' ? (center.districtHi || center.district) : center.district}
                   </div>
                 </div>
 
@@ -294,11 +294,11 @@ export default function CentersPage() {
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-b border-gray-200 py-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-semibold">{language === 'hi' ? 'तहसील:' : 'Tehsil:'}</span>
-                      <span className="font-bold text-gray-900">{center.tehsil || '-'}</span>
+                      <span className="font-bold text-gray-900">{language === 'hi' ? (center.tehsilHi || center.tehsil || '-') : (center.tehsil || '-')}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-semibold">{language === 'hi' ? 'क्षमता:' : 'Capacity:'}</span>
-                      <span className="font-bold text-gray-900">{center.dailyCapacity}/day</span>
+                      <span className="font-bold text-gray-900">{center.dailyCapacity} {language === 'hi' ? 'क्विंटल/दिन' : '/day'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-semibold">{language === 'hi' ? 'कतार:' : 'Queue:'}</span>
@@ -306,7 +306,7 @@ export default function CentersPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-semibold">{language === 'hi' ? 'प्रतीक्षा समय:' : 'Wait Time:'}</span>
-                      <span className="font-bold text-[#14532d]">~{center.avgProcessingTime || 16}m</span>
+                      <span className="font-bold text-[#14532d]">~{center.avgProcessingTime || 16} {language === 'hi' ? 'मिनट' : 'm'}</span>
                     </div>
                   </div>
 
@@ -319,7 +319,7 @@ export default function CentersPage() {
                         const cropData = crops.find(c => c.type === cropKey);
                         return (
                           <span key={cropKey} className="px-2 py-0.5 bg-gray-100 border border-gray-300 text-xs font-bold text-gray-800 uppercase rounded-sm">
-                            {language === 'hi' ? cropData?.nameHi : cropData?.nameEn || cropKey}
+                            {language === 'hi' ? (cropData?.nameHi || cropKey) : (cropData?.nameEn || cropKey)}
                           </span>
                         );
                       })}
@@ -329,7 +329,7 @@ export default function CentersPage() {
                   <div className="flex items-center justify-between text-xs text-gray-700 bg-gray-50 p-2 border border-gray-200">
                     <span className="flex items-center gap-1 font-semibold">
                       <Clock className="w-3.5 h-3.5" />
-                      {language === 'hi' ? center.operatingHoursHi : center.operatingHours}
+                      {language === 'hi' ? (center.operatingHoursHi || center.operatingHours) : center.operatingHours}
                     </span>
                     {center.contactPhone && (
                       <span className="flex items-center gap-1 font-semibold">
@@ -346,7 +346,7 @@ export default function CentersPage() {
                     href={`/centers/${center.id}`}
                     className="block w-full py-2 bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-bold uppercase text-center rounded-sm border border-[#9a3412] transition-colors"
                   >
-                    {language === 'hi' ? 'प्रोसीड टू बुकिंग' : 'Proceed to Booking'}
+                    {language === 'hi' ? 'स्लॉट बुक करें' : 'Proceed to Booking'}
                   </Link>
                 </div>
               </div>

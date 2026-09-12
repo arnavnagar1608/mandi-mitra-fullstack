@@ -84,7 +84,6 @@ export default function HistoryPage() {
                     {/* Header of Record */}
                     <div className="bg-gray-100 border-b border-gray-400 p-3 flex flex-col sm:flex-row justify-between items-center gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{crop?.emoji}</span>
                         <h3 className="text-sm font-bold text-gray-900 uppercase">
                           {language === 'hi' ? crop?.nameHi : crop?.nameEn}
                         </h3>

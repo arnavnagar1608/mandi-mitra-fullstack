@@ -67,6 +67,15 @@ async function adminLoginHandler(req, res, next) {
   }
 }
 
+async function adminRegisterHandler(req, res, next) {
+  try {
+    const result = await adminService.registerOfficer(req.body);
+    return successResponse(res, result, result.message || 'Officer registered successfully.', 201);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getDashboardMetricsHandler,
   getCenterRosterHandler,
@@ -74,4 +83,5 @@ module.exports = {
   updateQueueEntryHandler,
   getCenterAnalyticsHandler,
   adminLoginHandler,
+  adminRegisterHandler,
 };

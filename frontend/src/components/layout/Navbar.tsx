@@ -14,7 +14,8 @@ import {
   LogIn,
   UserPlus,
   LogOut,
-  User
+  User,
+  ShieldCheck
 } from 'lucide-react';
 
 export function Navbar() {
@@ -25,15 +26,13 @@ export function Navbar() {
   const [, setFontSizeClass] = useState<'normal' | 'large' | 'small'>('normal');
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About Us' },
-    { href: '/login', label: 'Farmer Registration' },
-    { href: '/centers', label: 'Slot Booking' },
-    { href: '/queue', label: 'Track Status' },
-    { href: '/centers', label: 'Procurement Centers' },
-    { href: '/guidelines', label: 'Guidelines' },
-    { href: '/contact', label: 'Contact Us' },
-    { href: '/services', label: 'Services ˅' },
+    { href: '/', label: language === 'hi' ? 'मुख्य पृष्ठ' : 'Home' },
+    { href: '/login', label: language === 'hi' ? 'किसान पंजीकरण' : 'Farmer Registration' },
+    { href: '/centers', label: language === 'hi' ? 'स्लॉट बुकिंग' : 'Slot Booking' },
+    { href: '/queue', label: language === 'hi' ? 'कतार स्थिति' : 'Track Status' },
+    { href: '/centers', label: language === 'hi' ? 'खरीद केंद्र' : 'Procurement Centers' },
+    { href: '/guidelines', label: language === 'hi' ? 'दिशानिर्देश' : 'Guidelines' },
+    { href: '/services', label: language === 'hi' ? 'सेवाएं ˅' : 'Services ˅' },
   ];
 
   return (
@@ -91,7 +90,7 @@ export function Navbar() {
             />
             <div className="flex flex-col">
               <span className="text-xl sm:text-2xl font-bold text-[#14532d] leading-tight font-sans">
-                {language === 'hi' ? 'ई-उपार्जन (E-Uparjan)' : 'ई-उपार्जन (E-Uparjan)'}
+                {language === 'hi' ? 'मंडी मित्र (Mandi Mitra)' : 'Mandi Mitra'}
               </span>
               <span className="text-sm text-[#14532d] font-medium leading-tight">
                 {language === 'hi' ? 'किसान समृद्धि पोर्टल' : 'Kisan Samriddhi Portal'}
@@ -103,46 +102,56 @@ export function Navbar() {
             <div className="relative">
               <input 
                 type="text" 
-                placeholder="Search..." 
+                placeholder={language === 'hi' ? 'खोजें...' : 'Search...'} 
                 className="pl-3 pr-8 py-1.5 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-[#14532d]"
               />
               <Search className="w-4 h-4 text-gray-400 absolute right-2.5 top-2" />
             </div>
             
-            <button className="relative p-1 text-[#f97316]">
+            <button className="relative p-1 text-[#f97316]" title={language === 'hi' ? 'सूचनाएं' : 'Notifications'}>
               <Bell className="w-5 h-5" />
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             </button>
 
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-3 ml-2">
-                <Link href="/dashboard" className="flex items-center gap-2 px-4 py-1.5 border border-[#14532d] text-[#14532d] hover:bg-gray-50 rounded-sm text-sm font-medium">
+              <div className="flex items-center gap-2 ml-2">
+                <Link href="/dashboard" className="flex items-center gap-2 px-3 py-1.5 border border-[#14532d] text-[#14532d] hover:bg-gray-50 rounded-sm text-sm font-medium">
                   <User className="w-4 h-4" />
-                  <span>Dashboard</span>
+                  <span>{language === 'hi' ? 'डैशबोर्ड' : 'Dashboard'}</span>
                 </Link>
-                <button onClick={logout} className="flex items-center gap-2 px-4 py-1.5 bg-[#14532d] text-white hover:bg-[#0f3d21] rounded-sm text-sm font-medium">
+                <button onClick={logout} className="flex items-center gap-2 px-3 py-1.5 bg-[#14532d] text-white hover:bg-[#0f3d21] rounded-sm text-sm font-medium">
                   <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                  <span>{language === 'hi' ? 'लॉगआउट' : 'Logout'}</span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 ml-2">
+              <div className="flex items-center gap-2 ml-2">
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 px-4 py-1.5 border border-[#14532d] text-[#14532d] hover:bg-gray-50 rounded-sm text-sm font-medium"
+                  className="flex items-center gap-2 px-3 py-1.5 border border-[#14532d] text-[#14532d] hover:bg-gray-50 rounded-sm text-sm font-medium"
                 >
                   <LogIn className="w-4 h-4" />
-                  <span>Login</span>
+                  <span>{language === 'hi' ? 'लॉगिन' : 'Login'}</span>
                 </Link>
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 px-4 py-1.5 bg-[#14532d] text-white hover:bg-[#0f3d21] rounded-sm text-sm font-medium"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-[#14532d] text-white hover:bg-[#0f3d21] rounded-sm text-sm font-medium"
                 >
                   <UserPlus className="w-4 h-4" />
-                  <span>Register</span>
+                  <span>{language === 'hi' ? 'पंजीकरण' : 'Register'}</span>
                 </Link>
               </div>
             )}
+
+            {/* Quick Officer/Admin Desk Access */}
+            <Link
+              href="/admin"
+              className="flex items-center gap-1 px-3 py-1.5 bg-[#fff7ed] hover:bg-[#ffedd5] text-[#c2410c] border border-[#ea580c]/50 rounded-sm text-xs font-bold uppercase transition"
+              title={language === 'hi' ? 'अधिकारी लॉगिन / डैशबोर्ड' : 'Officer Login / Dashboard'}
+            >
+              <ShieldCheck className="w-4 h-4 text-[#ea580c]" />
+              <span>{language === 'hi' ? 'एडमिन' : 'Admin'}</span>
+            </Link>
           </div>
 
           <div className="md:hidden flex items-center">
@@ -157,21 +166,41 @@ export function Navbar() {
       {/* 3. BOTTOM NAVIGATION BAR */}
       <nav className="bg-[#115e32] text-white hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center -mx-4">
-            {navLinks.map((item) => {
-              const isActive = pathname === item.href && item.href !== '/centers' && item.href !== '/queue' && item.href !== '/login';
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`px-4 py-3 text-sm font-medium transition-colors border-r border-[#1a7841] first:border-l ${
-                    isActive ? 'bg-[#0f4a2b]' : 'hover:bg-[#0f4a2b]'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <div className="flex items-center justify-between -mx-4">
+            
+            {/* Left Nav Links */}
+            <div className="flex items-center">
+              {navLinks.map((item) => {
+                const isActive = pathname === item.href && item.href !== '/centers' && item.href !== '/queue' && item.href !== '/login';
+                return (
+                  <Link
+                    key={item.href + item.label}
+                    href={item.href}
+                    className={`px-3.5 py-3 text-sm font-medium transition-colors border-r border-[#1a7841] first:border-l ${
+                      isActive ? 'bg-[#0f4a2b]' : 'hover:bg-[#0f4a2b]'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Rightmost Admin Dashboard Button */}
+            <div className="flex items-center pr-3">
+              <Link
+                href="/admin"
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xs font-bold text-xs uppercase tracking-wide transition shadow-sm border ${
+                  pathname.startsWith('/admin')
+                    ? 'bg-white text-[#115e32] border-white'
+                    : 'bg-[#ea580c] hover:bg-[#c2410c] text-white border-[#9a3412]'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>{language === 'hi' ? 'अधिकारी / एडमिन डैशबोर्ड' : 'Admin Dashboard'}</span>
+              </Link>
+            </div>
+
           </div>
         </div>
       </nav>
@@ -182,7 +211,7 @@ export function Navbar() {
            <div className="flex flex-col space-y-1">
             {navLinks.map((item) => (
               <Link
-                key={item.label}
+                key={item.href + item.label}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded text-sm font-medium hover:bg-[#0f4a2b]"
@@ -195,15 +224,31 @@ export function Navbar() {
            <div className="mt-4 pt-4 border-t border-[#0f4a2b] flex flex-col gap-2">
             {isAuthenticated && user ? (
               <>
-                <Link href="/dashboard" className="px-3 py-2 bg-white text-[#115e32] rounded text-sm font-bold text-center">Dashboard</Link>
-                <button onClick={logout} className="px-3 py-2 bg-red-600 text-white rounded text-sm font-bold text-center">Logout</button>
+                <Link href="/dashboard" className="px-3 py-2 bg-white text-[#115e32] rounded text-sm font-bold text-center">
+                  {language === 'hi' ? 'डैशबोर्ड' : 'Dashboard'}
+                </Link>
+                <button onClick={logout} className="px-3 py-2 bg-red-600 text-white rounded text-sm font-bold text-center">
+                  {language === 'hi' ? 'लॉगआउट' : 'Logout'}
+                </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="px-3 py-2 bg-white text-[#115e32] rounded text-sm font-bold text-center">Login</Link>
-                <Link href="/login" className="px-3 py-2 bg-[#f97316] text-white rounded text-sm font-bold text-center">Register</Link>
+                <Link href="/login" className="px-3 py-2 bg-white text-[#115e32] rounded text-sm font-bold text-center">
+                  {language === 'hi' ? 'लॉगिन' : 'Login'}
+                </Link>
+                <Link href="/login" className="px-3 py-2 bg-[#f97316] text-white rounded text-sm font-bold text-center">
+                  {language === 'hi' ? 'पंजीकरण' : 'Register'}
+                </Link>
               </>
             )}
+            <Link 
+              href="/admin" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-2 px-3 py-2 bg-[#ea580c] hover:bg-[#c2410c] text-white rounded text-sm font-bold text-center mt-1"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>{language === 'hi' ? 'अधिकारी / एडमिन डैशबोर्ड' : 'Admin Dashboard'}</span>
+            </Link>
            </div>
         </div>
       )}

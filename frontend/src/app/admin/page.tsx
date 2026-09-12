@@ -37,7 +37,10 @@ import {
   AlertCircle,
   HelpCircle,
   FileCheck2,
-  CalendarCheck
+  CalendarCheck,
+  UserPlus,
+  Mail,
+  Phone
 } from 'lucide-react';
 
 export interface OfficerProfile {
@@ -68,6 +71,21 @@ export default function AdminDashboardPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auth Mode: login vs register
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+  // Registration Form States
+  const [regOfficerId, setRegOfficerId] = useState('OFFICER-MP-003');
+  const [regName, setRegName] = useState('');
+  const [regNameHi, setRegNameHi] = useState('');
+  const [regDesignation, setRegDesignation] = useState('Mandi Center In-Charge');
+  const [regRole, setRegRole] = useState<'center_officer' | 'super_admin'>('center_officer');
+  const [regCenter, setRegCenter] = useState('c1');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regEmail, setRegEmail] = useState('');
 
   // Operational Officer Desk States
   const [queue, setQueue] = useState<QueueEntry[]>(fallbackQueue);
@@ -247,6 +265,93 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // 2B. Officer Registration Handler
+  const handleOfficerRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+
+    if (!regOfficerId.trim() || !regName.trim() || !regPassword.trim()) {
+      setLoginError(language === 'hi' ? 'कृपया अधिकारी आईडी, पूरा नाम एवं पासवर्ड दर्ज करें।' : 'Please enter Officer ID, Full Name, and Password.');
+      return;
+    }
+
+    if (regPassword.trim().length < 6) {
+      setLoginError(language === 'hi' ? 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।' : 'Password must be at least 6 characters.');
+      return;
+    }
+
+    if (regPassword.trim() !== regConfirmPassword.trim()) {
+      setLoginError(language === 'hi' ? 'पासवर्ड और पुष्टि पासवर्ड मेल नहीं खाते।' : 'Passwords do not match.');
+      return;
+    }
+
+    if (captchaInput.trim() !== captchaCode) {
+      setLoginError(language === 'hi' ? 'सुरक्षा कैप्चा कोड सही नहीं है। कृपया पुनः प्रयास करें।' : 'Invalid security captcha code. Please try again.');
+      generateCaptcha();
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await apiClient<{ token: string; officer: OfficerProfile }>('/admin/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          officerId: regOfficerId.trim(),
+          password: regPassword.trim(),
+          name: regName.trim(),
+          nameHi: regNameHi.trim() || regName.trim(),
+          designation: regDesignation.trim(),
+          role: regRole,
+          assignedCenterId: regRole === 'super_admin' ? null : regCenter,
+          phone: regPhone.trim(),
+          email: regEmail.trim(),
+        }),
+      });
+
+      if (res.success && res.data?.officer && res.data?.token) {
+        localStorage.setItem('mandi_mitra_token', res.data.token);
+        localStorage.setItem('mandi_mitra_officer_session', JSON.stringify(res.data.officer));
+        setOfficer(res.data.officer);
+        fetchRoster(res.data.token);
+        return;
+      }
+
+      // Offline fallback: create local officer session
+      const centerNames: Record<string, { en: string; hi: string }> = {
+        c1: { en: 'Bhopal Central Mandi', hi: 'भोपाल सेंट्रल मंडी' },
+        c2: { en: 'Indore Mandi Complex', hi: 'इंदौर मंडी कॉम्प्लेक्स' },
+        c3: { en: 'Ujjain Krishi Upaj Mandi', hi: 'उज्जैन कृषि उपज मंडी' },
+        c4: { en: 'Vidisha Grain Mandi', hi: 'विदिशा अनाज मंडी' },
+        c5: { en: 'Jabalpur Krishi Mandi', hi: 'जबलपुर कृषि मंडी' },
+        c6: { en: 'Gwalior Mandi Center', hi: 'ग्वालियर मंडी केंद्र' },
+      };
+      const centerInfo = centerNames[regCenter] || { en: 'Mandi Center', hi: 'मंडी केंद्र' };
+
+      const fallbackOfficer: OfficerProfile = {
+        officerId: regOfficerId.trim(),
+        name: regName.trim(),
+        nameHi: regNameHi.trim() || regName.trim(),
+        designation: regDesignation.trim(),
+        designationHi: regDesignation.trim(),
+        role: regRole,
+        assignedCenterId: regRole === 'super_admin' ? null : regCenter,
+        centerName: regRole === 'super_admin' ? 'All Mandis (Headquarters)' : centerInfo.en,
+        centerNameHi: regRole === 'super_admin' ? 'सभी मंडियां (मुख्यालय)' : centerInfo.hi,
+      };
+
+      const token = `mock-token-${regRole === 'super_admin' ? 'super_admin' : 'officer_1'}`;
+      localStorage.setItem('mandi_mitra_token', token);
+      localStorage.setItem('mandi_mitra_officer_session', JSON.stringify(fallbackOfficer));
+      setOfficer(fallbackOfficer);
+      fetchRoster(token);
+    } catch (err: any) {
+      setLoginError(err?.message || 'Registration failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // 3. Officer Logout Handler
   const handleOfficerLogout = () => {
     localStorage.removeItem('mandi_mitra_officer_session');
@@ -350,8 +455,8 @@ export default function AdminDashboardPage() {
               </span>
               <span className="text-xs text-gray-600 font-bold block mt-1">
                 {language === 'hi' 
-                  ? 'खाद्य एवं सार्वजनिक वितरण विभाग • राष्ट्रीय ई-उपार्जन प्रणाली' 
-                  : 'Department of Food & Public Distribution • National E-Procurement'}
+                  ? 'खाद्य एवं सार्वजनिक वितरण विभाग • मंडी मित्र पोर्टल' 
+                  : 'Department of Food & Public Distribution • Mandi Mitra Portal'}
               </span>
             </div>
 
@@ -368,10 +473,32 @@ export default function AdminDashboardPage() {
 
           {/* Login Card */}
           <div className="bg-white p-6 sm:p-8 border border-gray-300 shadow-sm rounded-sm space-y-6">
-            <div className="border-b border-gray-300 pb-2 mb-4">
-              <h2 className="text-lg font-bold text-gray-800 uppercase">
-                {language === 'hi' ? 'प्राधिकृत लॉगिन' : 'Authorized Login'}
-              </h2>
+            {/* Toggle Sign In vs Register */}
+            <div className="flex border-b border-gray-300 pb-0 mb-6">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setLoginError(null); generateCaptcha(); }}
+                className={`px-4 py-2.5 text-sm font-bold border-b-2 transition flex items-center gap-2 ${
+                  authMode === 'login'
+                    ? 'border-[#14532d] text-[#14532d]'
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <Lock className="w-4 h-4" />
+                <span>{language === 'hi' ? 'प्राधिकृत लॉगिन' : 'Officer Sign In'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('register'); setLoginError(null); generateCaptcha(); }}
+                className={`px-4 py-2.5 text-sm font-bold border-b-2 transition flex items-center gap-2 ${
+                  authMode === 'register'
+                    ? 'border-[#14532d] text-[#14532d]'
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>{language === 'hi' ? 'नया अधिकारी पंजीकरण' : 'New Officer Registration'}</span>
+              </button>
             </div>
             
             {/* Error Notification */}
@@ -379,131 +506,371 @@ export default function AdminDashboardPage() {
               <div className="p-3 bg-red-50 border border-red-300 text-red-800 text-xs sm:text-sm flex items-start gap-3 rounded-sm">
                 <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="font-bold">{language === 'hi' ? 'प्रवेश अस्वीकृत (Access Denied)' : 'Authentication Failed'}</div>
+                  <div className="font-bold">{language === 'hi' ? 'त्रुटि (Error)' : 'Action Failed'}</div>
                   <div className="text-red-700">{loginError}</div>
                 </div>
               </div>
             )}
 
-            <form onSubmit={handleOfficerLogin} className="space-y-5">
-              
-              {/* Officer ID */}
-              <div>
-                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
-                  {language === 'hi' ? 'अधिकारी पहचान पत्र / लॉगिन आईडी' : 'Officer ID / Official Login ID'}
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <UserCheck className="w-4 h-4 text-[#14532d]" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={officerId}
-                    onChange={(e) => setOfficerId(e.target.value)}
-                    placeholder={language === 'hi' ? 'उदा. OFFICER-MP-001' : 'e.g. OFFICER-MP-001'}
-                    className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="block text-xs font-bold text-gray-800 uppercase">
-                    {language === 'hi' ? 'सुरक्षा पासवर्ड / एक्सेस की' : 'Official Password / Access Key'}
+            {authMode === 'login' ? (
+              <form onSubmit={handleOfficerLogin} className="space-y-5">
+                
+                {/* Officer ID */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                    {language === 'hi' ? 'अधिकारी पहचान पत्र / लॉगिन आईडी' : 'Officer ID / Official Login ID'}
                   </label>
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <KeyRound className="w-4 h-4 text-[#14532d]" />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                      <UserCheck className="w-4 h-4 text-[#14532d]" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={officerId}
+                      onChange={(e) => setOfficerId(e.target.value)}
+                      placeholder={language === 'hi' ? 'उदा. OFFICER-MP-001' : 'e.g. OFFICER-MP-001'}
+                      className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
+                    />
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full pl-9 pr-9 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
                 </div>
-              </div>
 
-              {/* Mandi Center Selection */}
-              <div>
-                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
-                  {language === 'hi' ? 'संबंधित खरीद केंद्र (Assigned Mandi Center)' : 'Procurement Center Assignment'}
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <Building2 className="w-4 h-4 text-[#14532d]" />
+                {/* Password */}
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-xs font-bold text-gray-800 uppercase">
+                      {language === 'hi' ? 'सुरक्षा पासवर्ड / एक्सेस की' : 'Official Password / Access Key'}
+                    </label>
                   </div>
-                  <select
-                    value={selectedCenter}
-                    onChange={(e) => setSelectedCenter(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800 bg-white"
-                  >
-                    <option value="c1">Bhopal Central Mandi (भोपाल सेंट्रल मंडी - c1)</option>
-                    <option value="c2">Indore Mandi Complex (इंदौर मंडी कॉम्प्लेक्स - c2)</option>
-                    <option value="c3">Ujjain Grain Yard (उज्जैन अनाज यार्ड - c3)</option>
-                    <option value="all">State Headquarters / All Centers (मुख्यालय)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Security Captcha */}
-              <div>
-                <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
-                  {language === 'hi' ? 'सुरक्षा सत्यापन (Captcha)' : 'Security Verification Code'}
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="px-4 py-2 bg-gray-200 border border-gray-400 font-mono text-lg font-bold tracking-widest text-gray-800 select-none line-through decoration-gray-500 rounded-sm">
-                    {captchaCode}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                      <KeyRound className="w-4 h-4 text-[#14532d]" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full pl-9 pr-9 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={generateCaptcha}
-                    className="p-2 border border-gray-400 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm"
-                    title="Generate New Code"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                  </button>
-                  <input
-                    type="text"
-                    required
-                    maxLength={6}
-                    value={captchaInput}
-                    onChange={(e) => setCaptchaInput(e.target.value)}
-                    placeholder={language === 'hi' ? 'कोड दर्ज करें' : 'Enter code'}
-                    className="flex-1 py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] font-mono font-bold rounded-sm"
-                  />
                 </div>
-              </div>
 
-              {/* Sign In Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full mt-4 py-2.5 px-4 bg-[#14532d] hover:bg-[#115e32] text-white font-bold text-sm border border-[#0f3d21] shadow-sm rounded-sm flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                {isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Lock className="w-4 h-4 text-white" />
-                    <span className="uppercase tracking-wide">{language === 'hi' ? 'अधिकारी डेस्क में प्रवेश करें' : 'Sign In to Officer’s Desk'}</span>
-                  </>
-                )}
-              </button>
+                {/* Mandi Center Selection */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                    {language === 'hi' ? 'संबंधित खरीद केंद्र (Assigned Mandi Center)' : 'Procurement Center Assignment'}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                      <Building2 className="w-4 h-4 text-[#14532d]" />
+                    </div>
+                    <select
+                      value={selectedCenter}
+                      onChange={(e) => setSelectedCenter(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] focus:border-[#14532d] rounded-sm text-gray-800 bg-white"
+                    >
+                      <option value="c1">{language === 'hi' ? 'भोपाल सेंट्रल मंडी (Bhopal Central Mandi)' : 'Bhopal Central Mandi (c1)'}</option>
+                      <option value="c2">{language === 'hi' ? 'इंदौर मंडी कॉम्प्लेक्स (Indore Mandi Complex)' : 'Indore Mandi Complex (c2)'}</option>
+                      <option value="c3">{language === 'hi' ? 'उज्जैन कृषि उपज मंडी (Ujjain Mandi)' : 'Ujjain Krishi Upaj Mandi (c3)'}</option>
+                      <option value="all">{language === 'hi' ? 'समस्त मध्य प्रदेश मंडियां (Super Admin All Mandis)' : 'All MP Mandis (Super Admin HQ)'}</option>
+                    </select>
+                  </div>
+                </div>
 
-            </form>
+                {/* Security Captcha */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                    {language === 'hi' ? 'सुरक्षा सत्यापन (Security Verification)' : 'Security Verification'}
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="px-4 py-2 bg-gray-200 border border-gray-400 font-mono text-lg font-bold tracking-widest text-gray-800 select-none line-through decoration-gray-500 rounded-sm">
+                      {captchaCode}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={generateCaptcha}
+                      className="p-2 border border-gray-400 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm"
+                      title="Generate New Code"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="text"
+                      required
+                      maxLength={6}
+                      value={captchaInput}
+                      onChange={(e) => setCaptchaInput(e.target.value)}
+                      placeholder={language === 'hi' ? 'कोड दर्ज करें' : 'Enter code'}
+                      className="flex-1 py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] font-mono font-bold rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Sign In Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full mt-4 py-2.5 px-4 bg-[#14532d] hover:bg-[#115e32] text-white font-bold text-sm border border-[#0f3d21] shadow-sm rounded-sm flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {isSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4 text-white" />
+                      <span className="uppercase tracking-wide">{language === 'hi' ? 'अधिकारी डेस्क में प्रवेश करें' : 'Sign In to Officer’s Desk'}</span>
+                    </>
+                  )}
+                </button>
+
+              </form>
+            ) : (
+              /* Officer Registration Form */
+              <form onSubmit={handleOfficerRegister} className="space-y-4">
+                
+                <div className="bg-gray-50 border border-gray-200 p-3 rounded-sm text-xs text-gray-700">
+                  <strong>{language === 'hi' ? 'अधिकारी पंजीकरण निर्देश:' : 'Registration Notice:'}</strong>{' '}
+                  {language === 'hi' 
+                    ? 'कृपया अपने आधिकारिक पहचान पत्र के अनुसार विवरण भरें। यह खाता सीधे सुपाबेस (Supabase) डेटाबेस में सुरक्षित किया जाएगा।'
+                    : 'Enter your official credentials. Your profile will be registered directly into the Supabase database.'}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  
+                  {/* Officer ID */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'अधिकारी पहचान आईडी *' : 'Officer ID (Badge/Code) *'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <UserCheck className="w-4 h-4 text-[#14532d]" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={regOfficerId}
+                        onChange={(e) => setRegOfficerId(e.target.value)}
+                        placeholder="OFFICER-MP-003"
+                        className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800 font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Administrative Role */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'प्रशासनिक भूमिका / पद स्तर *' : 'Administrative Role *'}
+                    </label>
+                    <select
+                      value={regRole}
+                      onChange={(e) => setRegRole(e.target.value as any)}
+                      className="w-full py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800 bg-white"
+                    >
+                      <option value="center_officer">{language === 'hi' ? 'मंडी केंद्र प्रभारी (Center Officer)' : 'Center Officer (In-Charge)'}</option>
+                      <option value="super_admin">{language === 'hi' ? 'राज्य आयुक्त (Super Admin)' : 'Super Admin (State HQ)'}</option>
+                    </select>
+                  </div>
+
+                  {/* Name English */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'अधिकारी का पूरा नाम (English) *' : 'Full Name (English) *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      placeholder="e.g. Shri Ramesh Gupta"
+                      className="w-full py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                    />
+                  </div>
+
+                  {/* Name Hindi */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'पूरा नाम (हिन्दी)' : 'Full Name (Hindi)'}
+                    </label>
+                    <input
+                      type="text"
+                      value={regNameHi}
+                      onChange={(e) => setRegNameHi(e.target.value)}
+                      placeholder="उदा. श्री रमेश गुप्ता"
+                      className="w-full py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                    />
+                  </div>
+
+                  {/* Designation */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'पदनाम (Designation)' : 'Designation'}
+                    </label>
+                    <input
+                      type="text"
+                      value={regDesignation}
+                      onChange={(e) => setRegDesignation(e.target.value)}
+                      placeholder="Mandi Center In-Charge"
+                      className="w-full py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                    />
+                  </div>
+
+                  {/* Assigned Mandi Center */}
+                  {regRole !== 'super_admin' && (
+                    <div>
+                      <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                        {language === 'hi' ? 'आवंटित खरीद केंद्र *' : 'Assigned Mandi Center *'}
+                      </label>
+                      <select
+                        value={regCenter}
+                        onChange={(e) => setRegCenter(e.target.value)}
+                        className="w-full py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800 bg-white"
+                      >
+                        <option value="c1">{language === 'hi' ? 'भोपाल सेंट्रल मंडी (Bhopal)' : 'Bhopal Central Mandi (c1)'}</option>
+                        <option value="c2">{language === 'hi' ? 'इंदौर मंडी कॉम्प्लेक्स (Indore)' : 'Indore Mandi Complex (c2)'}</option>
+                        <option value="c3">{language === 'hi' ? 'उज्जैन कृषि उपज मंडी (Ujjain)' : 'Ujjain Krishi Upaj Mandi (c3)'}</option>
+                        <option value="c4">{language === 'hi' ? 'विदिशा अनाज मंडी (Vidisha)' : 'Vidisha Grain Mandi (c4)'}</option>
+                        <option value="c5">{language === 'hi' ? 'जबलपुर कृषि मंडी (Jabalpur)' : 'Jabalpur Krishi Mandi (c5)'}</option>
+                        <option value="c6">{language === 'hi' ? 'ग्वालियर मंडी केंद्र (Gwalior)' : 'Gwalior Mandi Center (c6)'}</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Official Email */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'विभागीय ईमेल आईडी' : 'Official Email ID'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <Mail className="w-4 h-4 text-[#14532d]" />
+                      </div>
+                      <input
+                        type="email"
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
+                        placeholder="officer@mandimitra.gov.in"
+                        className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Official Phone */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'संपर्क मोबाइल नंबर' : 'Official Contact Number'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <Phone className="w-4 h-4 text-[#14532d]" />
+                      </div>
+                      <input
+                        type="tel"
+                        value={regPhone}
+                        onChange={(e) => setRegPhone(e.target.value)}
+                        placeholder="9876543210"
+                        className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'सुरक्षा पासवर्ड *' : 'Password (min 6 chars) *'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <KeyRound className="w-4 h-4 text-[#14532d]" />
+                      </div>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={regPassword}
+                        onChange={(e) => setRegPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                      {language === 'hi' ? 'पासवर्ड की पुष्टि करें *' : 'Confirm Password *'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                        <KeyRound className="w-4 h-4 text-[#14532d]" />
+                      </div>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={regConfirmPassword}
+                        onChange={(e) => setRegConfirmPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full pl-9 pr-3 py-2 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] rounded-sm text-gray-800"
+                      />
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Security Captcha */}
+                <div className="pt-2">
+                  <label className="block text-xs font-bold text-gray-800 uppercase mb-1">
+                    {language === 'hi' ? 'सुरक्षा सत्यापन (Captcha Code) *' : 'Security Verification (Captcha) *'}
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="px-4 py-2 bg-gray-200 border border-gray-400 font-mono text-lg font-bold tracking-widest text-gray-800 select-none line-through decoration-gray-500 rounded-sm">
+                      {captchaCode}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={generateCaptcha}
+                      className="p-2 border border-gray-400 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-sm"
+                      title="Generate New Code"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="text"
+                      required
+                      maxLength={6}
+                      value={captchaInput}
+                      onChange={(e) => setCaptchaInput(e.target.value)}
+                      placeholder={language === 'hi' ? 'कोड दर्ज करें' : 'Enter code'}
+                      className="flex-1 py-2 px-3 border border-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-[#14532d] font-mono font-bold rounded-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Register Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full mt-4 py-2.5 px-4 bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-sm border border-[#9a3412] shadow-sm rounded-sm flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {isSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 text-white" />
+                      <span className="uppercase tracking-wide">{language === 'hi' ? 'अधिकारी खाता पंजीकृत करें' : 'Register Officer Account'}</span>
+                    </>
+                  )}
+                </button>
+
+              </form>
+            )}
 
             {/* Quick Demo Credentials Helper */}
             <div className="pt-4 border-t border-gray-300 mt-6">
@@ -776,9 +1143,8 @@ export default function AdminDashboardPage() {
                           <span className="text-[10px] font-bold text-gray-500">{farmer.phone}</span>
                         </td>
                         <td className="py-2.5 px-4 border border-gray-300">
-                          <span className="inline-flex items-center gap-1 font-bold text-gray-800 uppercase">
-                            <span>{c?.emoji}</span>
-                            <span>{language === 'hi' ? c?.nameHi : c?.nameEn}</span>
+                          <span className="font-bold text-gray-800 uppercase">
+                            {language === 'hi' ? c?.nameHi : c?.nameEn}
                           </span>
                         </td>
                         <td className="py-2.5 px-4 border border-gray-300 font-bold text-gray-800 uppercase">

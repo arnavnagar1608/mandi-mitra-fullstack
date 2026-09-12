@@ -31,7 +31,8 @@ import {
   FileText,
   Sparkles,
   Phone,
-  QrCode
+  QrCode,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -147,7 +148,7 @@ export default function DashboardPage() {
 
                 <div className="bg-yellow-50 border border-yellow-200 p-3 text-sm text-yellow-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-start gap-2">
-                    <span className="font-bold">⚠️</span>
+                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <span>
                       {language === 'hi' 
                         ? 'कृपया टोकन समय से 15 मिनट पहले केंद्र पर रिपोर्ट करें।' 

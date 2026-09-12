@@ -12,10 +12,12 @@ const {
   updateQueueEntryHandler,
   getCenterAnalyticsHandler,
   adminLoginHandler,
+  adminRegisterHandler,
 } = require('../controllers/adminController');
 
-// Public officer login portal endpoint
+// Public officer login & registration portal endpoints
 router.post('/login', adminLoginHandler);
+router.post('/register', adminRegisterHandler);
 
 // All other admin routes require admin auth
 const adminAuth = [authenticate, requireAdminRole(['super_admin', 'center_officer'])];
